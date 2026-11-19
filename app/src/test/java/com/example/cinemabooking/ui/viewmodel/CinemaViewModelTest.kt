@@ -107,4 +107,27 @@ class CinemaViewModelTest {
             viewModel.uiState.value.selectedSeats.isEmpty()
         )
     }
+
+    @Test
+    fun multipleSeatsCanBeBookedTogether() {
+        val viewModel = CinemaViewModel()
+
+        viewModel.selectMovie(4)
+        viewModel.selectShowtime(402)
+
+        viewModel.toggleSeat("C4")
+        viewModel.toggleSeat("A1")
+
+        val booking = viewModel.confirmBooking()
+
+        assertEquals(
+            listOf("A1", "C4"),
+            booking?.seatIds
+        )
+
+        assertEquals(5000, booking?.totalKzt)
+
+        assertTrue("A1" in viewModel.occupiedSeats(402))
+        assertTrue("C4" in viewModel.occupiedSeats(402))
+    }
 }
