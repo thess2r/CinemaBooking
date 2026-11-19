@@ -1,3 +1,4 @@
+
 package com.example.cinemabooking.data.repository
 
 import com.example.cinemabooking.data.model.Movie
@@ -7,43 +8,43 @@ class MovieRepository {
     private val movies = listOf(
         Movie(
             id = 1,
-            title = "Interstellar",
-            genre = "Sci-Fi / Drama",
-            durationMinutes = 169,
-            ageRating = "PG-13",
-            description = "A team of astronauts travels through space to find a new home for humanity."
+            title = "The Last Harbour",
+            genre = "Drama",
+            durationMinutes = 128,
+            ageRating = "12+",
+            description = "A dramatic story set in a coastal town."
         ),
         Movie(
             id = 2,
-            title = "Inception",
-            genre = "Sci-Fi / Thriller",
-            durationMinutes = 148,
-            ageRating = "PG-13",
-            description = "A skilled thief enters people's dreams to steal and plant ideas."
+            title = "Night Signal",
+            genre = "Thriller",
+            durationMinutes = 112,
+            ageRating = "16+",
+            description = "A mysterious signal leads to an unexpected discovery."
         ),
         Movie(
             id = 3,
-            title = "Spider-Man: No Way Home",
-            genre = "Action / Adventure",
-            durationMinutes = 148,
-            ageRating = "PG-13",
-            description = "Peter Parker faces unexpected challenges after his secret identity becomes public."
+            title = "Saffron Summer",
+            genre = "Romance",
+            durationMinutes = 104,
+            ageRating = "12+",
+            description = "A summer story about friendship and relationships."
         ),
         Movie(
             id = 4,
-            title = "Dune: Part Two",
-            genre = "Sci-Fi / Adventure",
-            durationMinutes = 166,
-            ageRating = "PG-13",
-            description = "Paul Atreides joins the Fremen and fights for the future of Arrakis."
+            title = "Steppe Riders",
+            genre = "Adventure",
+            durationMinutes = 136,
+            ageRating = "12+",
+            description = "An adventure across the vast steppes."
         ),
         Movie(
             id = 5,
-            title = "Inside Out 2",
-            genre = "Animation / Comedy",
-            durationMinutes = 96,
-            ageRating = "PG",
-            description = "Riley faces new emotions as she enters her teenage years."
+            title = "Quiet Orbit",
+            genre = "Sci-Fi",
+            durationMinutes = 121,
+            ageRating = "16+",
+            description = "An exploration mission uncovers a mystery in space."
         )
     )
 
@@ -51,21 +52,17 @@ class MovieRepository {
         return movies
     }
 
-
     fun getMovieById(id: Int): Movie? {
         return movies.find { movie ->
             movie.id == id
         }
     }
+
     fun searchMovies(query: String): List<Movie> {
         val searchText = query.trim()
 
         return movies.filter { movie ->
-            movie.title.contains(
-                searchText,
-                ignoreCase = true
-            )
+            movie.title.contains(searchText, ignoreCase = true)
         }
     }
-
 }
