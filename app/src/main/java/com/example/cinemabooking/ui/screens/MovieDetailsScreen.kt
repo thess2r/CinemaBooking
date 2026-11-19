@@ -39,81 +39,106 @@ fun MovieDetailsScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Background)
-            .padding(16.dp)
     ) {
-        // Заглушка вместо постера
-        Box(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(Accent),
-            contentAlignment = Alignment.Center
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp)
         ) {
-            Text(
-                text = movie.title,
-                color = Color.White,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = movie.title,
-            color = TextColor,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = "${movie.genre} · ${movie.durationMinutes} min · ${movie.ageRating}",
-            color = Muted,
-            fontSize = 14.sp
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = movie.description,
-            color = TextColor,
-            fontSize = 14.sp
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = "Showtimes",
-            color = TextColor,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            showtimes.forEach { showtime ->
-                ShowtimeButton(
-                    time = showtime.time,
-                    isSelected = showtime.id == selectedShowtimeId,
-                    onClick = { onSelectShowtime(showtime.id) },
-                    modifier = Modifier.weight(1f)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Accent),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = movie.title,
+                    color = Color.White,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
                 )
             }
-        }
-        val selectedShowtime = showtimes.find { it.id == selectedShowtimeId }
-        if (selectedShowtime != null) {
+
             Spacer(modifier = Modifier.height(16.dp))
+
             Text(
-                text = "Today · Hall ${selectedShowtime.hall} · ${selectedShowtime.priceKzt} ₸ per seat",
+                text = movie.title,
+                color = TextColor,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "${movie.genre} · ${movie.durationMinutes} min · ${movie.ageRating}",
                 color = Muted,
                 fontSize = 14.sp
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = movie.description,
+                color = TextColor,
+                fontSize = 14.sp
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = "Showtimes",
+                color = TextColor,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                showtimes.forEach { showtime ->
+                    ShowtimeButton(
+                        time = showtime.time,
+                        isSelected = showtime.id == selectedShowtimeId,
+                        onClick = { onSelectShowtime(showtime.id) },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+
+            val selectedShowtime = showtimes.find { it.id == selectedShowtimeId }
+            if (selectedShowtime != null) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Today · Hall ${selectedShowtime.hall} · ${selectedShowtime.priceKzt} ₸ per seat",
+                    color = Muted,
+                    fontSize = 14.sp
+                )
+            }
+        }
+
+        Button(
+            onClick = onChooseSeats,
+            enabled = selectedShowtimeId != null,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .height(48.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Accent,
+                contentColor = Color.White,
+                disabledContainerColor = Border,
+                disabledContentColor = Muted
+            )
+        ) {
+            Text("Choose Seats")
         }
     }
 }
