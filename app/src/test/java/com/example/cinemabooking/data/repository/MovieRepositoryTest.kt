@@ -60,6 +60,17 @@ class MovieRepositoryTest {
         assertEquals(5, movies.size)
     }
 
+    @Test
+    fun searchMovies_trimsSpaces() {
+        val repository = MovieRepository()
+
+        val movies = repository.searchMovies("  dune  ")
+
+        assertEquals(1, movies.size)
+        assertEquals("Dune: Part Two", movies[0].title)
+    }
+
+
 
 
 
