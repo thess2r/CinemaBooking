@@ -39,7 +39,14 @@ fun MovieDetailsScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Background)
+            .statusBarsPadding()
     ) {
+        TextButton(
+            onClick = onBack,
+            modifier = Modifier.padding(horizontal = 8.dp)
+        ) {
+            Text("← Back", color = Accent, fontSize = 16.sp)
+        }
         Column(
             modifier = Modifier
                 .weight(1f)
