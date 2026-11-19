@@ -39,7 +39,10 @@ class CinemaViewModel : ViewModel() {
         val showtime = ShowtimeRepository.getShowtimeById(showtimeId) ?: return
         _uiState.update { current ->
             if (showtime.movieId != current.selectedMovieId) current
-            else current.copy(selectedShowtimeId = showtimeId, selectedSeats = emptySet())
+            else current.copy(selectedShowtimeId = showtimeId,
+                selectedSeats = emptySet(),
+                confirmedBooking = null
+            )
         }
     }
 
