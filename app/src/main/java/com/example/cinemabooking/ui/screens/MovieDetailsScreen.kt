@@ -41,11 +41,46 @@ fun MovieDetailsScreen(
             .background(Background)
             .padding(16.dp)
     ) {
+        // Заглушка вместо постера
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(Accent),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = movie.title,
+                color = Color.White,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         Text(
             text = movie.title,
             color = TextColor,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = "${movie.genre} · ${movie.durationMinutes} min · ${movie.ageRating}",
+            color = Muted,
+            fontSize = 14.sp
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = movie.description,
+            color = TextColor,
+            fontSize = 14.sp
         )
     }
 }
