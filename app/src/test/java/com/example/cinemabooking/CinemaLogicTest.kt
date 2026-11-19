@@ -11,9 +11,10 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class CinemaLogicTest {
-    @Test fun movieSearchFindsSteppeRidersIgnoringCase() {
-        assertEquals("Steppe Riders", MovieRepository.getMovieById(4)?.title)
-        assertEquals(listOf(4), MovieRepository.search("sTePpE").map { it.id })
+    @Test
+    fun movieSearchFindsDuneIgnoringCase() {
+        assertEquals("Dune: Part Two", MovieRepository.getMovieById(4)?.title)
+        assertEquals(listOf(4), MovieRepository.search("dUnE").map { it.id })
     }
 
     @Test fun steppeRidersHasThreeShowtimesAndDemoSession() {

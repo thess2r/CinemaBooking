@@ -15,7 +15,7 @@ class TicketShareTextTest {
             requireNotNull(ShowtimeRepository.getShowtimeById(402))
         )
 
-        listOf("#1001", "Steppe Riders", "18:00", "Hall 2", "C4, C3", "5 000 ₸", "Demo only")
-            .forEach { assertTrue("Missing $it", it in text) }
+        listOf("#1001", "Dune: Part Two", "18:00", "Hall 2", "C4, C3", "5 000 ₸", "Demo only")
+                .forEach { assertTrue("Missing $it", it in text) }
     }
 }

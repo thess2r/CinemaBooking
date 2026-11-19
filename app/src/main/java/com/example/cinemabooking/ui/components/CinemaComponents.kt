@@ -48,8 +48,7 @@ fun PosterPlaceholder(movie: Movie, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun MovieCard(movie: Movie, onDetailsClick: (Int) -> Unit) {
-    Card(
+fun MovieCardPlaceholder(movie: Movie, onDetailsClick: (Int) -> Unit) {    Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = CinemaSurface)
     ) {

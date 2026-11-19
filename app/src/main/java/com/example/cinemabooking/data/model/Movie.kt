@@ -1,3 +1,4 @@
+
 package com.example.cinemabooking.data.model
 
 data class Movie(
