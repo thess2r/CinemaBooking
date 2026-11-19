@@ -15,18 +15,17 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.cinemabooking.data.repository.MovieRepository
 import com.example.cinemabooking.data.repository.ShowtimeRepository
+import com.example.cinemabooking.navigation.CinemaRoutes.DETAILS
+import com.example.cinemabooking.navigation.CinemaRoutes.MOVIES
+import com.example.cinemabooking.navigation.CinemaRoutes.SEATS
+import com.example.cinemabooking.navigation.CinemaRoutes.SUMMARY
+import com.example.cinemabooking.navigation.CinemaRoutes.TICKET
 import com.example.cinemabooking.ui.screens.BookingSummaryScreen
 import com.example.cinemabooking.ui.screens.MovieDetailsScreen
 import com.example.cinemabooking.ui.screens.MoviesScreen
 import com.example.cinemabooking.ui.screens.SeatSelectionScreen
 import com.example.cinemabooking.ui.screens.TicketScreen
 import com.example.cinemabooking.ui.viewmodel.CinemaViewModel
-
-private const val MOVIES = "movies"
-private const val DETAILS = "details/{movieId}"
-private const val SEATS = "seats/{movieId}/{showtimeId}"
-private const val SUMMARY = "summary"
-private const val TICKET = "ticket"
 
 @Composable
 fun AppNavigation(cinemaViewModel: CinemaViewModel = viewModel()) {
@@ -41,7 +40,7 @@ fun AppNavigation(cinemaViewModel: CinemaViewModel = viewModel()) {
         composable(MOVIES) {
             MoviesScreen(movies = state.movies) { movieId ->
                 cinemaViewModel.selectMovie(movieId)
-                navController.navigate("details/$movieId")
+                navController.navigate(CinemaRoutes.details(movieId))
             }
         }
         composable(DETAILS, arguments = listOf(navArgument("movieId") { type = NavType.IntType })) { entry ->
@@ -55,7 +54,7 @@ fun AppNavigation(cinemaViewModel: CinemaViewModel = viewModel()) {
                 onSelectShowtime = cinemaViewModel::selectShowtime,
                 onChooseSeats = {
                     state.selectedShowtimeId?.let { showtimeId ->
-                        navController.navigate("seats/$movieId/$showtimeId")
+                        navController.navigate(CinemaRoutes.seats(movieId, showtimeId))
                     }
                 },
                 onBack = { navController.navigateUp() }
