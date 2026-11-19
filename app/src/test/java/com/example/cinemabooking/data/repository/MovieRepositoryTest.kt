@@ -1,6 +1,7 @@
 package com.example.cinemabooking.data.repository
 
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertNull
 import org.junit.Test
 
 class MovieRepositoryTest {
@@ -20,5 +21,15 @@ class MovieRepositoryTest {
 
         assertEquals("Dune: Part Two", movie?.title)
     }
+
+    @Test
+    fun getMovieById_unknownId_returnsNull() {
+        val repository = MovieRepository()
+
+        val movie = repository.getMovieById(999)
+
+        assertNull(movie)
+    }
+
 
 }
