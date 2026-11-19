@@ -1,7 +1,11 @@
 
 package com.example.cinemabooking.ui.components
 
-
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -48,22 +52,33 @@ fun MovieCard(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(130.dp)
-                    .background(
-                        color = Color(0xFFE3DDD6),
-                        shape = RoundedCornerShape(12.dp)
-                    ),
+                    .height(180.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(0xFFE3DDD6)),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "CINEMA KIT",
-                    fontSize = 16.sp,
-                    color = MutedColor
-                )
+                val posterId = movie.posterResId
+
+                if (posterId != null) {
+                    Image(
+                        painter = painterResource(id = posterId),
+                        contentDescription = "Poster of ${movie.title}",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Text(
+                        text = "CINEMA KIT",
+                        fontSize = 16.sp,
+                        color = MutedColor
+                    )
+                }
             }
+
 
             Text(
                 text = movie.title,

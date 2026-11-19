@@ -1,6 +1,7 @@
 
 package com.example.cinemabooking.data.repository
 
+import com.example.cinemabooking.R
 import com.example.cinemabooking.data.model.Movie
 
 class MovieRepository {
@@ -12,7 +13,8 @@ class MovieRepository {
             genre = "Sci-Fi / Drama",
             durationMinutes = 169,
             ageRating = "PG-13",
-            description = "Astronauts travel through space to find a new home for humanity."
+            description = "Astronauts travel through space to find a new home for humanity.",
+            posterResId = R.drawable.interstellar
         ),
         Movie(
             id = 2,
@@ -20,7 +22,8 @@ class MovieRepository {
             genre = "Sci-Fi / Thriller",
             durationMinutes = 148,
             ageRating = "PG-13",
-            description = "A skilled thief enters dreams to steal and plant ideas."
+            description = "A skilled thief enters dreams to steal and plant ideas.",
+            posterResId = R.drawable.inception
         ),
         Movie(
             id = 3,
@@ -28,7 +31,8 @@ class MovieRepository {
             genre = "Action / Adventure",
             durationMinutes = 148,
             ageRating = "PG-13",
-            description = "Peter Parker faces challenges after his identity becomes public."
+            description = "Peter Parker faces challenges after his identity becomes public.",
+            posterResId = R.drawable.spider_man
         ),
         Movie(
             id = 4,
@@ -36,7 +40,8 @@ class MovieRepository {
             genre = "Sci-Fi / Adventure",
             durationMinutes = 166,
             ageRating = "PG-13",
-            description = "Paul Atreides joins the Fremen to fight for the future of Arrakis."
+            description = "Paul Atreides joins the Fremen to fight for the future of Arrakis.",
+            posterResId = R.drawable.dune
         ),
         Movie(
             id = 5,
@@ -44,7 +49,8 @@ class MovieRepository {
             genre = "Animation / Comedy",
             durationMinutes = 96,
             ageRating = "PG",
-            description = "Riley experiences new emotions as she enters her teenage years."
+            description = "Riley experiences new emotions as she enters her teenage years.",
+            posterResId = R.drawable.inside_out
         )
     )
 
