@@ -11,4 +11,14 @@ class MovieRepositoryTest {
 
         assertEquals(5, movies.size)
     }
+
+    @Test
+    fun getMovieById_existingId_returnsCorrectMovie() {
+        val repository = MovieRepository()
+
+        val movie = repository.getMovieById(4)
+
+        assertEquals("Dune: Part Two", movie?.title)
+    }
+
 }
