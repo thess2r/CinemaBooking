@@ -1,19 +1,74 @@
+
 package com.example.cinemabooking.data.repository
 
+import com.example.cinemabooking.R
 import com.example.cinemabooking.data.model.Movie
 
-object MovieRepository {
-    val movies = listOf(
-        Movie(1, "Night Signal", "Thriller", 112, "16+", "A mysterious radio transmission draws a journalist into the city's hidden past."),
-        Movie(2, "After the Rain", "Drama", 98, "12+", "Two old friends reconnect during a long summer in Almaty."),
-        Movie(3, "Orbit 9", "Sci-Fi", 124, "12+", "A young engineer races to bring a stranded crew home."),
-        Movie(4, "Steppe Riders", "Adventure", 106, "12+", "A journey across the steppe becomes a story of courage and friendship."),
-        Movie(5, "Little Lantern", "Family", 89, "6+", "A curious child discovers a secret festival of lights.")
-    )
+class MovieRepository {
 
-    fun getMovieById(id: Int): Movie? = movies.find { it.id == id }
+    companion object {
+        val movies = listOf(
+            Movie(
+                id = 1,
+                title = "Interstellar",
+                genre = "Sci-Fi / Drama",
+                durationMinutes = 169,
+                ageRating = "PG-13",
+                description = "Astronauts travel through space to find a new home for humanity.",
+                posterResId = R.drawable.interstellar
+            ),
+            Movie(
+                id = 2,
+                title = "Inception",
+                genre = "Sci-Fi / Thriller",
+                durationMinutes = 148,
+                ageRating = "PG-13",
+                description = "A skilled thief enters dreams to steal and plant ideas.",
+                posterResId = R.drawable.inception
+            ),
+            Movie(
+                id = 3,
+                title = "Spider-Man: No Way Home",
+                genre = "Action / Adventure",
+                durationMinutes = 148,
+                ageRating = "PG-13",
+                description = "Peter Parker faces challenges after his identity becomes public.",
+                posterResId = R.drawable.spider_man
+            ),
+            Movie(
+                id = 4,
+                title = "Dune: Part Two",
+                genre = "Sci-Fi / Adventure",
+                durationMinutes = 166,
+                ageRating = "PG-13",
+                description = "Paul Atreides joins the Fremen to fight for the future of Arrakis.",
+                posterResId = R.drawable.dune
+            ),
+            Movie(
+                id = 5,
+                title = "Inside Out 2",
+                genre = "Animation / Comedy",
+                durationMinutes = 96,
+                ageRating = "PG",
+                description = "Riley experiences new emotions as she enters her teenage years.",
+                posterResId = R.drawable.inside_out
+            )
+        )
 
-    fun search(query: String): List<Movie> = movies.filter {
-        it.title.contains(query.trim(), ignoreCase = true)
+        fun getMovieById(id: Int): Movie? =
+            movies.find { it.id == id }
+
+        fun search(query: String): List<Movie> =
+            movies.filter {
+                it.title.contains(query.trim(), ignoreCase = true)
+            }
     }
+
+    fun getMovies(): List<Movie> = movies
+
+    fun getMovieById(id: Int): Movie? =
+        Companion.getMovieById(id)
+
+    fun searchMovies(query: String): List<Movie> =
+        Companion.search(query)
 }
