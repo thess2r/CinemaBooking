@@ -57,5 +57,15 @@ class MovieRepository {
             movie.id == id
         }
     }
+    fun searchMovies(query: String): List<Movie> {
+        val searchText = query.trim()
+
+        return movies.filter { movie ->
+            movie.title.contains(
+                searchText,
+                ignoreCase = true
+            )
+        }
+    }
 
 }
