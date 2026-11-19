@@ -3,6 +3,7 @@ package com.example.cinemabooking.ui.screens
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import com.example.cinemabooking.data.model.Booking
 import com.example.cinemabooking.data.model.Movie
 import com.example.cinemabooking.data.model.Showtime
 import com.example.cinemabooking.ui.booking.formatPriceKzt
+import com.example.cinemabooking.ui.booking.ticketShareText
 import com.example.cinemabooking.ui.components.DetailRow
 import com.example.cinemabooking.ui.theme.CinemaAccent
 import com.example.cinemabooking.ui.theme.CinemaSurface
@@ -67,6 +69,16 @@ fun TicketScreen(
             },
             modifier = Modifier.fillMaxWidth()
         ) { Text("Copy ticket number") }
+        OutlinedButton(
+            onClick = {
+                val sendIntent = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, ticketShareText(booking, movie, showtime))
+                }
+                context.startActivity(Intent.createChooser(sendIntent, "Share demo ticket"))
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) { Text("Share demo ticket") }
         Text("Demo ticket — not valid for admission", color = CinemaAccent, fontWeight = FontWeight.Bold)
         Button(onClick = onBackToMovies, modifier = Modifier.fillMaxWidth()) {
             Text("Back to Movies")
