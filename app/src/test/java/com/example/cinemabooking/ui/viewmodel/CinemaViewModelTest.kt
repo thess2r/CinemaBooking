@@ -75,4 +75,19 @@ class CinemaViewModelTest {
 
         assertNull(viewModel.confirmBooking())
     }
+
+    @Test
+    fun invalidSeatCannotBeSelected() {
+        val viewModel = CinemaViewModel()
+
+        viewModel.selectMovie(4)
+        viewModel.selectShowtime(402)
+
+        viewModel.toggleSeat("D5")
+        viewModel.toggleSeat("Z1")
+
+        assertTrue(
+            viewModel.uiState.value.selectedSeats.isEmpty()
+        )
+    }
 }
