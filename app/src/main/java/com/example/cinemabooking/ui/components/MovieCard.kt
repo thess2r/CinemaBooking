@@ -8,8 +8,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cinemabooking.data.model.Movie
+import com.example.cinemabooking.data.repository.MovieRepository
 
 @Composable
 fun MovieCard(
@@ -29,5 +31,18 @@ fun MovieCard(
             Text(text = "${movie.durationMinutes} min")
             Text(text = movie.ageRating)
         }
+    }
+}
+@Preview(showBackground = true)
+@Composable
+fun MovieCardPreview() {
+    val repository = MovieRepository()
+    val movie = repository.getMovieById(1)
+
+    if (movie != null) {
+        MovieCard(
+            movie = movie,
+            onDetailsClick = {}
+        )
     }
 }
