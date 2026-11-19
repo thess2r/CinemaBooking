@@ -8,43 +8,43 @@ class MovieRepository {
     private val movies = listOf(
         Movie(
             id = 1,
-            title = "The Last Harbour",
-            genre = "Drama",
-            durationMinutes = 128,
-            ageRating = "12+",
-            description = "A dramatic story set in a coastal town."
+            title = "Interstellar",
+            genre = "Sci-Fi / Drama",
+            durationMinutes = 169,
+            ageRating = "PG-13",
+            description = "Astronauts travel through space to find a new home for humanity."
         ),
         Movie(
             id = 2,
-            title = "Night Signal",
-            genre = "Thriller",
-            durationMinutes = 112,
-            ageRating = "16+",
-            description = "A mysterious signal leads to an unexpected discovery."
+            title = "Inception",
+            genre = "Sci-Fi / Thriller",
+            durationMinutes = 148,
+            ageRating = "PG-13",
+            description = "A skilled thief enters dreams to steal and plant ideas."
         ),
         Movie(
             id = 3,
-            title = "Saffron Summer",
-            genre = "Romance",
-            durationMinutes = 104,
-            ageRating = "12+",
-            description = "A summer story about friendship and relationships."
+            title = "Spider-Man: No Way Home",
+            genre = "Action / Adventure",
+            durationMinutes = 148,
+            ageRating = "PG-13",
+            description = "Peter Parker faces challenges after his identity becomes public."
         ),
         Movie(
             id = 4,
-            title = "Steppe Riders",
-            genre = "Adventure",
-            durationMinutes = 136,
-            ageRating = "12+",
-            description = "An adventure across the vast steppes."
+            title = "Dune: Part Two",
+            genre = "Sci-Fi / Adventure",
+            durationMinutes = 166,
+            ageRating = "PG-13",
+            description = "Paul Atreides joins the Fremen to fight for the future of Arrakis."
         ),
         Movie(
             id = 5,
-            title = "Quiet Orbit",
-            genre = "Sci-Fi",
-            durationMinutes = 121,
-            ageRating = "16+",
-            description = "An exploration mission uncovers a mystery in space."
+            title = "Inside Out 2",
+            genre = "Animation / Comedy",
+            durationMinutes = 96,
+            ageRating = "PG",
+            description = "Riley experiences new emotions as she enters her teenage years."
         )
     )
 

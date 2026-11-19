@@ -20,7 +20,7 @@ class MovieRepositoryTest {
 
         val movie = repository.getMovieById(4)
 
-        assertEquals("Steppe Riders", movie?.title)
+        assertEquals("Dune: Part Two", movie?.title)
     }
 
     @Test
@@ -36,10 +36,10 @@ class MovieRepositoryTest {
     fun searchMovies_ignoresCase() {
         val repository = MovieRepository()
 
-        val movies = repository.searchMovies("NIGHT")
+        val movies = repository.searchMovies("INTER")
 
         assertEquals(1, movies.size)
-        assertEquals("Night Signal", movies[0].title)
+        assertEquals("Interstellar", movies[0].title)
     }
 
     @Test
@@ -64,10 +64,10 @@ class MovieRepositoryTest {
     fun searchMovies_trimsSpaces() {
         val repository = MovieRepository()
 
-        val movies = repository.searchMovies("  steppe  ")
+        val movies = repository.searchMovies("  dune  ")
 
         assertEquals(1, movies.size)
-        assertEquals("Steppe Riders", movies[0].title)
+        assertEquals("Dune: Part Two", movies[0].title)
     }
 
 
