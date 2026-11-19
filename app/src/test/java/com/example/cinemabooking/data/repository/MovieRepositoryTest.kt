@@ -51,6 +51,15 @@ class MovieRepositoryTest {
         assertTrue(movies.isEmpty())
     }
 
+    @Test
+    fun searchMovies_emptyQuery_returnsAllMovies() {
+        val repository = MovieRepository()
+
+        val movies = repository.searchMovies("")
+
+        assertEquals(5, movies.size)
+    }
+
 
 
 
