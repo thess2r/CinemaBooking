@@ -15,6 +15,7 @@ fun calculateTotal(priceKzt: Int, selectedSeatIds: Set<String>): Int =
 
 fun canConfirmBooking(movieId: Int?, showtimeId: Int?, seatIds: Set<String>): Boolean =
     movieId != null && showtimeId != null && seatIds.isNotEmpty() &&
+        SeatRepository.allSeats.containsAll(seatIds) &&
         MovieRepository.getMovieById(movieId) != null &&
         ShowtimeRepository.getShowtimeById(showtimeId)?.movieId == movieId
 

@@ -33,6 +33,7 @@ class CinemaLogicTest {
         assertFalse(canConfirmBooking(4, 402, emptySet()))
         assertFalse(canConfirmBooking(99, 402, setOf("C4")))
         assertFalse(canConfirmBooking(4, 102, setOf("C4")))
+        assertFalse(canConfirmBooking(4, 402, setOf("Z99")))
         assertTrue(canConfirmBooking(4, 402, setOf("C4")))
     }
 
@@ -57,5 +58,21 @@ class CinemaLogicTest {
         model.selectMovie(1)
         assertEquals(null, model.uiState.value.selectedShowtimeId)
         assertTrue(model.uiState.value.selectedSeats.isEmpty())
+    }
+
+    @Test fun returningFromTicketKeepsBookedSeatsButClearsDraftSelection() {
+        val model = CinemaViewModel()
+        model.selectMovie(4)
+        model.selectShowtime(402)
+        model.toggleSeat("C4")
+        val booking = requireNotNull(model.confirmBooking())
+
+        assertEquals(listOf("C4"), booking.seatIds)
+        model.clearSelection()
+        assertEquals(null, model.uiState.value.selectedMovieId)
+        assertEquals(null, model.uiState.value.confirmedBooking)
+        assertTrue(model.uiState.value.selectedSeats.isEmpty())
+        assertEquals(listOf(booking), model.uiState.value.bookings)
+        assertTrue("C4" in model.occupiedSeats(402))
     }
 }
