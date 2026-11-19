@@ -31,5 +31,16 @@ class MovieRepositoryTest {
         assertNull(movie)
     }
 
+    @Test
+    fun searchMovies_ignoresCase() {
+        val repository = MovieRepository()
+
+        val movies = repository.searchMovies("INTER")
+
+        assertEquals(1, movies.size)
+        assertEquals("Interstellar", movies[0].title)
+    }
+
+
 
 }
