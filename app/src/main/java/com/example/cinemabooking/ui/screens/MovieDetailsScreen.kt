@@ -82,6 +82,30 @@ fun MovieDetailsScreen(
             color = TextColor,
             fontSize = 14.sp
         )
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = "Showtimes",
+            color = TextColor,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            showtimes.forEach { showtime ->
+                ShowtimeButton(
+                    time = showtime.time,
+                    isSelected = showtime.id == selectedShowtimeId,
+                    onClick = { onSelectShowtime(showtime.id) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
     }
 }
 
