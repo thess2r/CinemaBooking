@@ -13,13 +13,20 @@ Bigali Assanali
 
 ## Manual Test Cases
 
-| ID | Test Case | Expected Result | Status  |
-|---|---|---|---------|
-| M-01 | Open MoviesScreen | All 5 movies displayed | Passed  |
-| M-02 | Check movie posters | Correct posters displayed | Passed  |
-| M-03 | Search "inter" | Interstellar displayed | Not Run |
-| M-04 | Search "xyz123" | "No movies found" displayed | Passed  |
-| M-05 | Click View Details | Correct movieId passed | Passed  |
+| ID | Test Case | Expected Result | Status |
+|---|---|---|--------|
+| M-01 | Open MoviesScreen | All 5 movies displayed | Passed |
+| M-02 | Check movie posters | Correct posters displayed | Passed |
+| M-03 | Search "inter" | Interstellar displayed | Passed |
+| M-04 | Search "xyz123" | "No movies found" displayed | Passed |
+| M-05 | Click View Details | Correct movieId passed | Passed |
+
+## Testing Notes
+
+- M-01 to M-04: Passed using Android Studio Interactive Preview.
+- M-05: Pending Navigation Compose integration by Part 4.
+- Unit Tests: 7 passed.
+- Build: BUILD SUCCESSFUL.
 
 ## Unit Tests
 File: MovieRepositoryTest.kt
