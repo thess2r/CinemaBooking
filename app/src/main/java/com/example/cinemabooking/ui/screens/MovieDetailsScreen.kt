@@ -106,6 +106,15 @@ fun MovieDetailsScreen(
                 )
             }
         }
+        val selectedShowtime = showtimes.find { it.id == selectedShowtimeId }
+        if (selectedShowtime != null) {
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Today · Hall ${selectedShowtime.hall} · ${selectedShowtime.priceKzt} ₸ per seat",
+                color = Muted,
+                fontSize = 14.sp
+            )
+        }
     }
 }
 
