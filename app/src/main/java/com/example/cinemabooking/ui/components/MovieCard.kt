@@ -37,7 +37,7 @@ fun MovieCard(
 @Composable
 fun MovieCardPreview() {
     val repository = MovieRepository()
-    val movie = repository.getMovieById(1)
+    val movie = repository.getMovieById(4)
 
     if (movie != null) {
         MovieCard(
