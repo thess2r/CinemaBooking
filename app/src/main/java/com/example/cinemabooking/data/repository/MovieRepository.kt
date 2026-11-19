@@ -6,69 +6,69 @@ import com.example.cinemabooking.data.model.Movie
 
 class MovieRepository {
 
-    private val movies = listOf(
-        Movie(
-            id = 1,
-            title = "Interstellar",
-            genre = "Sci-Fi / Drama",
-            durationMinutes = 169,
-            ageRating = "PG-13",
-            description = "Astronauts travel through space to find a new home for humanity.",
-            posterResId = R.drawable.interstellar
-        ),
-        Movie(
-            id = 2,
-            title = "Inception",
-            genre = "Sci-Fi / Thriller",
-            durationMinutes = 148,
-            ageRating = "PG-13",
-            description = "A skilled thief enters dreams to steal and plant ideas.",
-            posterResId = R.drawable.inception
-        ),
-        Movie(
-            id = 3,
-            title = "Spider-Man: No Way Home",
-            genre = "Action / Adventure",
-            durationMinutes = 148,
-            ageRating = "PG-13",
-            description = "Peter Parker faces challenges after his identity becomes public.",
-            posterResId = R.drawable.spider_man
-        ),
-        Movie(
-            id = 4,
-            title = "Dune: Part Two",
-            genre = "Sci-Fi / Adventure",
-            durationMinutes = 166,
-            ageRating = "PG-13",
-            description = "Paul Atreides joins the Fremen to fight for the future of Arrakis.",
-            posterResId = R.drawable.dune
-        ),
-        Movie(
-            id = 5,
-            title = "Inside Out 2",
-            genre = "Animation / Comedy",
-            durationMinutes = 96,
-            ageRating = "PG",
-            description = "Riley experiences new emotions as she enters her teenage years.",
-            posterResId = R.drawable.inside_out
+    companion object {
+        val movies = listOf(
+            Movie(
+                id = 1,
+                title = "Interstellar",
+                genre = "Sci-Fi / Drama",
+                durationMinutes = 169,
+                ageRating = "PG-13",
+                description = "Astronauts travel through space to find a new home for humanity.",
+                posterResId = R.drawable.interstellar
+            ),
+            Movie(
+                id = 2,
+                title = "Inception",
+                genre = "Sci-Fi / Thriller",
+                durationMinutes = 148,
+                ageRating = "PG-13",
+                description = "A skilled thief enters dreams to steal and plant ideas.",
+                posterResId = R.drawable.inception
+            ),
+            Movie(
+                id = 3,
+                title = "Spider-Man: No Way Home",
+                genre = "Action / Adventure",
+                durationMinutes = 148,
+                ageRating = "PG-13",
+                description = "Peter Parker faces challenges after his identity becomes public.",
+                posterResId = R.drawable.spider_man
+            ),
+            Movie(
+                id = 4,
+                title = "Dune: Part Two",
+                genre = "Sci-Fi / Adventure",
+                durationMinutes = 166,
+                ageRating = "PG-13",
+                description = "Paul Atreides joins the Fremen to fight for the future of Arrakis.",
+                posterResId = R.drawable.dune
+            ),
+            Movie(
+                id = 5,
+                title = "Inside Out 2",
+                genre = "Animation / Comedy",
+                durationMinutes = 96,
+                ageRating = "PG",
+                description = "Riley experiences new emotions as she enters her teenage years.",
+                posterResId = R.drawable.inside_out
+            )
         )
-    )
 
-    fun getMovies(): List<Movie> {
-        return movies
+        fun getMovieById(id: Int): Movie? =
+            movies.find { it.id == id }
+
+        fun search(query: String): List<Movie> =
+            movies.filter {
+                it.title.contains(query.trim(), ignoreCase = true)
+            }
     }
 
-    fun getMovieById(id: Int): Movie? {
-        return movies.find { movie ->
-            movie.id == id
-        }
-    }
+    fun getMovies(): List<Movie> = movies
 
-    fun searchMovies(query: String): List<Movie> {
-        val searchText = query.trim()
+    fun getMovieById(id: Int): Movie? =
+        Companion.getMovieById(id)
 
-        return movies.filter { movie ->
-            movie.title.contains(searchText, ignoreCase = true)
-        }
-    }
+    fun searchMovies(query: String): List<Movie> =
+        Companion.search(query)
 }
