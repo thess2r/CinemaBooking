@@ -67,6 +67,23 @@ class CinemaViewModelTest {
     }
 
     @Test
+    fun changingShowtimeClearsPreviousConfirmedBooking() {
+        val viewModel = CinemaViewModel()
+
+        viewModel.selectMovie(4)
+        viewModel.selectShowtime(402)
+        viewModel.toggleSeat("C4")
+
+        viewModel.confirmBooking()
+
+        assertTrue(viewModel.uiState.value.confirmedBooking != null)
+
+        viewModel.selectShowtime(403)
+
+        assertNull(viewModel.uiState.value.confirmedBooking)
+    }
+
+    @Test
     fun bookingCannotBeConfirmedWithoutSeats() {
         val viewModel = CinemaViewModel()
 
