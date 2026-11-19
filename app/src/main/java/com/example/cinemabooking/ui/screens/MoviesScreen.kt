@@ -1,9 +1,15 @@
 
 package com.example.cinemabooking.ui.screens
-
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -25,6 +31,14 @@ fun MoviesScreen(
     movies: List<Movie>,
     onMovieClick: (Int) -> Unit
 ) {
+    var searchQuery by remember { mutableStateOf("") }
+
+    val filteredMovies = movies.filter { movie ->
+        movie.title.contains(
+            searchQuery.trim(),
+            ignoreCase = true
+        )
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -43,21 +57,37 @@ fun MoviesScreen(
             style = MaterialTheme.typography.titleLarge,
             color = Color(0xFF1E1A17)
         )
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = { searchQuery = it },
+            label = { Text("Search by title") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
 
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(
-                items = movies,
-                key = { movie -> movie.id }
-            ) { movie ->
-                MovieCard(
-                    movie = movie,
-                    onDetailsClick = onMovieClick
-                )
+
+        if (filteredMovies.isEmpty()) {
+            Text(
+                text = "No movies found",
+                color = Color(0xFF756F68)
+            )
+        } else {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(
+                    items = filteredMovies,
+                    key = { movie -> movie.id }
+                ) { movie ->
+                    MovieCard(
+                        movie = movie,
+                        onDetailsClick = onMovieClick
+                    )
+                }
             }
         }
+
     }
 }
 
