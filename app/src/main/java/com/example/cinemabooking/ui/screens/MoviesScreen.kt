@@ -1,5 +1,9 @@
 
 package com.example.cinemabooking.ui.screens
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.getValue
@@ -42,6 +46,7 @@ fun MoviesScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color(0xFFF1EDE8))
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -62,14 +67,23 @@ fun MoviesScreen(
             onValueChange = { searchQuery = it },
             label = { Text("Search by title") },
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color(0xFFC6512D),
+                unfocusedBorderColor = Color(0xFFE3DDD6),
+                focusedContainerColor = Color(0xFFFAF8F5),
+                unfocusedContainerColor = Color(0xFFFAF8F5)
+            )
         )
 
 
         if (filteredMovies.isEmpty()) {
             Text(
                 text = "No movies found",
-                color = Color(0xFF756F68)
+                color = Color(0xFF756F68),
+                fontSize = 16.sp,
+                modifier = Modifier.padding(vertical = 24.dp)
             )
         } else {
             LazyColumn(
