@@ -32,7 +32,7 @@ class BookingSummaryScreenTest {
             }
         }
 
-        composeRule.onNodeWithText("Steppe Riders").assertExists()
+        composeRule.onNodeWithText("Dune: Part Two").assertExists()
         composeRule.onNodeWithText("C4").assertExists()
         composeRule.onAllNodesWithText("2 500 ₸").assertCountEquals(2)
         composeRule.onNodeWithText("Confirm Booking").performClick()

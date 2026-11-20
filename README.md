@@ -17,7 +17,7 @@ Cinema Kit is a local demo Android app for choosing a movie, showtime and seats,
 - Booking summary with a confirmation dialog and a demo ticket that can be copied or shared
 - `movieId` and `showtimeId` route arguments with working back navigation and a recovery screen for missing booking data
 
-The sample defense path is **Steppe Riders → 18:00 → Hall 2 → C4 → 2 500 ₸ → Confirm Booking → Book seats → Ticket → Back to Movies**. The ticket is a demonstration only and is not valid for admission. Bookings are held in memory for the current app process; there is no payment, account or database.
+The sample defense path is **Dune: Part Two → 18:00 → Hall 2 → C4 → 2 500 ₸ → Confirm Booking → Book seats → Ticket → Back to Movies**. The ticket is a demonstration only and is not valid for admission. Bookings are held in memory for the current app process; there is no payment, account or database.
 
 See the [ticket screenshot](docs/screenshots/ticket.png), [large-font screenshot](docs/screenshots/ticket-large-font.png), and [manual emulator check](docs/tests/manual-smoke.md).
 
