@@ -1,5 +1,6 @@
 package com.example.cinemabooking.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -11,10 +12,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.cinemabooking.R
 import com.example.cinemabooking.data.model.Movie
 import com.example.cinemabooking.data.model.Showtime
 import com.example.cinemabooking.data.repository.ShowtimeRepository
@@ -53,20 +57,33 @@ fun MovieDetailsScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Accent),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = movie.title,
-                    color = Color.White,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
+            val posterResId = movie.posterResId
+            if (posterResId != null) {
+                Image(
+                    painter = painterResource(id = posterResId),
+                    contentDescription = movie.title,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .clip(RoundedCornerShape(16.dp)),
+                    contentScale = ContentScale.Crop
                 )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(Accent),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = movie.title,
+                        color = Color.White,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -161,7 +178,8 @@ private fun MovieDetailsScreenPreview() {
             genre = "Adventure",
             durationMinutes = 136,
             ageRating = "12+",
-            description = "A group of riders crosses the steppe in search of a lost herd."
+            description = "A group of riders crosses the steppe in search of a lost herd.",
+            posterResId = R.drawable.dune
         ),
         showtimes = ShowtimeRepository.getShowtimesForMovie(4),
         selectedShowtimeId = selectedId,
