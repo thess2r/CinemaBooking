@@ -26,7 +26,9 @@ class BookingRepository(
     }
 
     suspend fun addBooking(booking: Booking): Booking {
-        val generatedId = bookingDao.insertBooking(booking.toEntity())
+        val generatedId = bookingDao.insertBookingIfSeatsAvailable(
+            booking.toEntity()
+        )
         return booking.copy(id = generatedId.toInt())
     }
 
