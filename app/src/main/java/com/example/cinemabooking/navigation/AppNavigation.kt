@@ -1,5 +1,10 @@
 package com.example.cinemabooking.navigation
 
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import com.example.cinemabooking.data.database.BookingDatabase
+import com.example.cinemabooking.data.repository.BookingRepository
+import com.example.cinemabooking.ui.viewmodel.CinemaViewModelFactory
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
@@ -28,7 +33,19 @@ import com.example.cinemabooking.ui.screens.TicketScreen
 import com.example.cinemabooking.ui.viewmodel.CinemaViewModel
 
 @Composable
-fun AppNavigation(cinemaViewModel: CinemaViewModel = viewModel()) {
+fun AppNavigation() {
+    val context = LocalContext.current
+
+    val bookingRepository = remember(context) {
+        BookingRepository(
+            BookingDatabase.getDatabase(context).bookingDao()
+        )
+    }
+
+    val cinemaViewModel: CinemaViewModel = viewModel(
+        factory = CinemaViewModelFactory(bookingRepository)
+    )
+
     val navController = rememberNavController()
     val state by cinemaViewModel.uiState.collectAsState()
     val recoverToMovies: () -> Unit = {
@@ -107,8 +124,14 @@ fun AppNavigation(cinemaViewModel: CinemaViewModel = viewModel()) {
                     showtime = showtime,
                     selectedSeats = state.selectedSeats,
                     onConfirm = {
-                        if (cinemaViewModel.confirmBooking() != null) {
-                            navController.navigate(TICKET) { popUpTo(MOVIES) { inclusive = false } }
+                        cinemaViewModel.confirmBooking { booking ->
+                            if (booking != null) {
+                                navController.navigate(TICKET) {
+                                    popUpTo(MOVIES) {
+                                        inclusive = false
+                                    }
+                                }
+                            }
                         }
                     },
                     onBack = { navController.navigateUp() }
