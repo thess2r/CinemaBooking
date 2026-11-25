@@ -37,6 +37,9 @@ interface BookingDao {
     @Query("SELECT * FROM bookings WHERE showtimeId = :showtimeId")
     suspend fun getBookingsByShowtime(showtimeId: Int): List<BookingEntity>
 
+    @Query("DELETE FROM bookings")
+    suspend fun deleteAllBookings()
+
     @Transaction
     suspend fun insertBookingIfSeatsAvailable(
         booking: BookingEntity

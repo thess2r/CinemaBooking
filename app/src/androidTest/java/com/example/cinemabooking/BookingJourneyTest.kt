@@ -8,13 +8,33 @@ import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import org.junit.Rule
 import org.junit.Test
+import androidx.test.core.app.ApplicationProvider
+import android.content.Context
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.junit.Before
+import kotlinx.coroutines.runBlocking
+import com.example.cinemabooking.data.database.BookingDatabase
 
 class BookingJourneyTest {
     @get:Rule val composeRule = createAndroidComposeRule<MainActivity>()
 
+    @Before
+    fun clearDatabase() = runBlocking {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        BookingDatabase.getDatabase(context)
+            .bookingDao()
+            .deleteAllBookings()
+    }
+
     @Test fun movieToTicketAndBackUsesTheSameBooking() {
         bookDuneC4()
-        composeRule.onNodeWithText("Ticket #1001").assertExists()
+        composeRule.onNodeWithText(
+            "Booking confirmed"
+        ).assertExists()
+
+        composeRule.onNodeWithText(
+            "Copy ticket number"
+        ).assertExists()
         composeRule.onNodeWithText("Dune: Part Two").assertExists()
         composeRule.onNodeWithText("C4").assertExists()
         composeRule.onNodeWithText("2 500 ₸").assertExists()

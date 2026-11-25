@@ -172,4 +172,79 @@ class BookingRepositoryTest {
             context.deleteDatabase(databaseName)
         }
     }
+
+    @Test
+    fun addBooking_rejectsAlreadyBookedSeatsForSameShowtime() = runBlocking {
+        val firstBooking = Booking(
+            id = 0,
+            movieId = 1,
+            showtimeId = 402,
+            seatIds = listOf("A1", "A2"),
+            totalKzt = 3000
+        )
+
+        repository.addBooking(firstBooking)
+
+        val duplicateBooking = Booking(
+            id = 0,
+            movieId = 1,
+            showtimeId = 402,
+            seatIds = listOf("A2", "B1"),
+            totalKzt = 3000
+        )
+
+        try {
+            repository.addBooking(duplicateBooking)
+            throw AssertionError("Duplicate seat booking should have been rejected")
+        } catch (exception: IllegalStateException) {
+            assertNotNull(exception.message)
+        }
+
+        val bookings = repository.observeAllBookings().first()
+        assertEquals(1, bookings.size)
+    }
+
+    @Test
+    fun addBooking_allowsSameSeatForDifferentShowtimes() = runBlocking {
+        val firstBooking = Booking(
+            id = 0,
+            movieId = 1,
+            showtimeId = 402,
+            seatIds = listOf("A1"),
+            totalKzt = 1500
+        )
+
+        val secondBooking = Booking(
+            id = 0,
+            movieId = 1,
+            showtimeId = 403,
+            seatIds = listOf("A1"),
+            totalKzt = 1500
+        )
+
+        repository.addBooking(firstBooking)
+        repository.addBooking(secondBooking)
+
+        val bookings = repository.observeAllBookings().first()
+
+        assertEquals(2, bookings.size)
+    }
+
+    @Test
+    fun observeAllBookings_emitsUpdatedDataAfterInsert() = runBlocking {
+        val booking = Booking(
+            id = 0,
+            movieId = 1,
+            showtimeId = 402,
+            seatIds = listOf("C2"),
+            totalKzt = 1500
+        )
+
+        repository.addBooking(booking)
+
+        val result = repository.observeAllBookings().first()
+
+        assertEquals(1, result.size)
+        assertEquals(listOf("C2"), result.first().seatIds)
+    }
 }
