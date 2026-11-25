@@ -1,6 +1,6 @@
 
 package com.example.cinemabooking.ui.viewmodel
-
+import com.example.cinemabooking.data.repository.OnlineMoviesDataSource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cinemabooking.data.remote.model.OnlineMovie
@@ -26,7 +26,7 @@ sealed interface OnlineMoviesUiState {
 }
 
 class OnlineMoviesViewModel(
-    private val repository: OnlineMovieRepository =
+    private val repository: OnlineMoviesDataSource =
         OnlineMovieRepository()
 ) : ViewModel() {
 
