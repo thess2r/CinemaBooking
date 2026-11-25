@@ -25,8 +25,10 @@ class BookingRepository(
         return bookingDao.getBookingById(bookingId)?.toBooking()
     }
 
-    suspend fun addBooking(booking: Booking) {
-        bookingDao.insertBooking(booking.toEntity())
+    suspend fun addBooking(booking: Booking): Booking {
+        val generatedId = bookingDao.insertBooking(booking.toEntity())
+
+        return booking.copy(id = generatedId.toInt())
     }
 
     suspend fun updateBooking(booking: Booking) {
