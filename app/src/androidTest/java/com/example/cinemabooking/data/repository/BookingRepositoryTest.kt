@@ -94,4 +94,82 @@ class BookingRepositoryTest {
         assertEquals(null, result)
         assertEquals(0, repository.observeAllBookings().first().size)
     }
+
+    @Test
+    fun observeBookingsByShowtime_returnsOnlyMatchingBookings() = runBlocking {
+        val firstBooking = Booking(
+            id = 0,
+            movieId = 1,
+            showtimeId = 402,
+            seatIds = listOf("A1"),
+            totalKzt = 1500
+        )
+
+        val secondBooking = Booking(
+            id = 0,
+            movieId = 1,
+            showtimeId = 403,
+            seatIds = listOf("B1"),
+            totalKzt = 1500
+        )
+
+        repository.addBooking(firstBooking)
+        repository.addBooking(secondBooking)
+
+        val result = repository.observeBookingsByShowtime(402).first()
+
+        assertEquals(1, result.size)
+        assertEquals(402, result.first().showtimeId)
+        assertEquals(listOf("A1"), result.first().seatIds)
+    }
+
+    @Test
+    fun bookingPersistsAfterDatabaseReopens() = runBlocking {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val databaseName = "booking_persistence_test"
+
+        context.deleteDatabase(databaseName)
+
+        var persistentDatabase = Room.databaseBuilder(
+            context,
+            BookingDatabase::class.java,
+            databaseName
+        ).build()
+
+        try {
+            val persistentRepository =
+                BookingRepository(persistentDatabase.bookingDao())
+
+            val booking = Booking(
+                id = 0,
+                movieId = 1,
+                showtimeId = 402,
+                seatIds = listOf("A1", "B1"),
+                totalKzt = 3000
+            )
+
+            val savedBooking = persistentRepository.addBooking(booking)
+
+            persistentDatabase.close()
+
+            persistentDatabase = Room.databaseBuilder(
+                context,
+                BookingDatabase::class.java,
+                databaseName
+            ).build()
+
+            val reopenedRepository =
+                BookingRepository(persistentDatabase.bookingDao())
+
+            val result = reopenedRepository.getBookingById(savedBooking.id)
+
+            assertNotNull(result)
+            assertEquals(savedBooking.id, result?.id)
+            assertEquals(listOf("A1", "B1"), result?.seatIds)
+            assertEquals(3000, result?.totalKzt)
+        } finally {
+            persistentDatabase.close()
+            context.deleteDatabase(databaseName)
+        }
+    }
 }
