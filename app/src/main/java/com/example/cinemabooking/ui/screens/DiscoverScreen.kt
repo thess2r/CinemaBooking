@@ -17,7 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import com.example.cinemabooking.data.remote.model.OnlineMovie
 import com.example.cinemabooking.ui.viewmodel.OnlineMoviesUiState
 import com.example.cinemabooking.ui.viewmodel.OnlineMoviesViewModel
@@ -60,13 +61,53 @@ fun DiscoverScreen(
                 }
             }
 
+
             is OnlineMoviesUiState.Error -> {
-                Text(text = state.message)
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Unable to load movies",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(text = state.message)
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Button(
+                        onClick = { moviesViewModel.retry() }
+                    ) {
+                        Text(text = "Retry")
+                    }
+                }
             }
 
             is OnlineMoviesUiState.Empty -> {
-                Text(text = "No movies available")
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "No movies available",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Button(
+                        onClick = { moviesViewModel.retry() }
+                    ) {
+                        Text(text = "Try Again")
+                    }
+                }
             }
+
         }
     }
 }
