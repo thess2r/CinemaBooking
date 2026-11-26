@@ -29,6 +29,8 @@ import com.example.cinemabooking.data.model.Showtime
 import com.example.cinemabooking.ui.booking.formatPriceKzt
 import com.example.cinemabooking.ui.booking.ticketShareText
 import com.example.cinemabooking.ui.components.DetailRow
+import com.example.cinemabooking.ui.theme.CinemaAccent
+import com.example.cinemabooking.ui.theme.CinemaSurface
 
 @Composable
 fun TicketScreen(
@@ -46,10 +48,10 @@ fun TicketScreen(
         Text("Your demo ticket is ready.")
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+            colors = CardDefaults.cardColors(containerColor = CinemaSurface)
         ) {
             Column(Modifier.padding(20.dp)) {
-                Text("CINEMA KIT", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+                Text("CINEMA KIT", color = CinemaAccent, fontWeight = FontWeight.Bold)
                 Text("Ticket #${booking.id}", style = MaterialTheme.typography.titleLarge)
                 DetailRow("Movie", movie.title)
                 DetailRow("Date", "Today")
@@ -77,7 +79,7 @@ fun TicketScreen(
             },
             modifier = Modifier.fillMaxWidth()
         ) { Text("Share demo ticket") }
-        Text("Demo ticket — not valid for admission", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+        Text("Demo ticket — not valid for admission", color = CinemaAccent, fontWeight = FontWeight.Bold)
         Button(onClick = onBackToMovies, modifier = Modifier.fillMaxWidth()) {
             Text("Back to Movies")
         }

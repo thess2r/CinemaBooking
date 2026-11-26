@@ -23,7 +23,3 @@ On `feature/booking-defense-polish`, the Pixel 6 emulator (API 35) completed the
 `./gradlew :app:testDebugUnitTest :app:connectedDebugAndroidTest` passed on the branch. The Android UI suite includes the complete movie-to-ticket journey, confirmation and cancellation, ticket copying, reopening the session to check that C4 stays occupied, and the unavailable-booking recovery screen. The ticket remains a local demo; the share text labels it as such.
 
 The same manual path also passed with the emulator font scale at 1.3. The system font scale was returned to 1.0 after the check.
-
-## Team catalog integration — 20 November 2026
-
-After the movies and seats branches were merged into `main`, the catalog switched to the team's new sample movies. The current defense path is **Dune: Part Two → View Details → 18:00 → C4 → Booking Summary → Book seats → Ticket #1001 → Back to Movies**. This path and the Android share sheet were checked manually on Pixel 6 API 35 at normal and 1.3× font scale. The ticket screenshots were refreshed for Dune: Part Two. The full `:app:assembleDebug :app:testDebugUnitTest :app:connectedDebugAndroidTest` run passed after the UI tests were updated to the current catalog.

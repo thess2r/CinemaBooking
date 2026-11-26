@@ -23,6 +23,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.cinemabooking.data.model.Movie
 import com.example.cinemabooking.data.model.Showtime
+import com.example.cinemabooking.ui.theme.CinemaAccent
+import com.example.cinemabooking.ui.theme.CinemaMuted
+import com.example.cinemabooking.ui.theme.CinemaSurface
 
 @Composable
 fun PosterPlaceholder(movie: Movie, modifier: Modifier = Modifier) {
@@ -47,12 +50,12 @@ fun PosterPlaceholder(movie: Movie, modifier: Modifier = Modifier) {
 @Composable
 fun MovieCardPlaceholder(movie: Movie, onDetailsClick: (Int) -> Unit) {    Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        colors = CardDefaults.cardColors(containerColor = CinemaSurface)
     ) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             PosterPlaceholder(movie, Modifier.fillMaxWidth().height(130.dp))
             Text(movie.title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-            Text("${movie.genre}  •  ${movie.durationMinutes} min  •  ${movie.ageRating}", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text("${movie.genre}  •  ${movie.durationMinutes} min  •  ${movie.ageRating}", color = CinemaMuted)
             Button(onClick = { onDetailsClick(movie.id) }, modifier = Modifier.fillMaxWidth()) {
                 Text("Details")
             }
@@ -85,7 +88,7 @@ fun DetailRow(label: String, value: String) {
         Modifier.fillMaxWidth().padding(vertical = 7.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Text(value, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.primary)
+        Text(label, color = CinemaMuted)
+        Text(value, fontWeight = FontWeight.SemiBold, color = CinemaAccent)
     }
 }
