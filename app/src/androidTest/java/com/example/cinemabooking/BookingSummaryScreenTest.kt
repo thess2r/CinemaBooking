@@ -26,7 +26,7 @@ class BookingSummaryScreenTest {
                     movie = requireNotNull(MovieRepository.getMovieById(4)),
                     showtime = requireNotNull(ShowtimeRepository.getShowtimeById(402)),
                     selectedSeats = setOf("C4"),
-                    onConfirm = { confirmed = true },
+                    onConfirm = { done -> confirmed = true; done(true) },
                     onBack = {}
                 )
             }
@@ -67,7 +67,7 @@ class BookingSummaryScreenTest {
                     movie = requireNotNull(MovieRepository.getMovieById(4)),
                     showtime = requireNotNull(ShowtimeRepository.getShowtimeById(402)),
                     selectedSeats = setOf("C4"),
-                    onConfirm = { confirmed = true },
+                    onConfirm = { done -> confirmed = true; done(true) },
                     onBack = {}
                 )
             }

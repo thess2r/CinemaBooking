@@ -1,4 +1,3 @@
-
 package com.example.cinemabooking.ui.screens
 
 import androidx.compose.material3.OutlinedTextField
@@ -23,13 +22,19 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.platform.testTag
+import com.example.cinemabooking.R
 import com.example.cinemabooking.data.remote.model.OnlineMovie
 import com.example.cinemabooking.ui.viewmodel.OnlineMoviesUiState
 import com.example.cinemabooking.ui.viewmodel.OnlineMoviesViewModel
 
 @Composable
 fun DiscoverScreen(
-    moviesViewModel: OnlineMoviesViewModel = viewModel()
+    moviesViewModel: OnlineMoviesViewModel = viewModel(),
+    onBack: () -> Unit = {}
 ) {
     val uiState by moviesViewModel.uiState.collectAsState()
 
@@ -42,6 +47,7 @@ fun DiscoverScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
+        TextButton(onClick = onBack) { Text("← Back to Movies") }
         Text(
             text = "Discover Movies",
             style = MaterialTheme.typography.headlineMedium
@@ -55,7 +61,7 @@ fun DiscoverScreen(
             label = { Text("Search movies") },
             placeholder = { Text("Enter movie title") },
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().testTag("discover-search")
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -167,10 +173,14 @@ fun OnlineMovieItem(movie: OnlineMovie) {
             AsyncImage(
                 model = movie.image,
                 contentDescription = "Poster of ${movie.title}",
+                placeholder = painterResource(R.drawable.poster_placeholder),
+                error = painterResource(R.drawable.poster_placeholder),
+                fallback = painterResource(R.drawable.poster_placeholder),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(220.dp)
+                    .clipToBounds()
             )
 
             Text(text = movie.title)

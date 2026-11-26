@@ -41,10 +41,10 @@ class BookingRepositoryTest {
     fun addBooking_savesBookingToDatabase() = runBlocking {
         val booking = Booking(
             id = 0,
-            movieId = 1,
+            movieId = 4,
             showtimeId = 402,
-            seatIds = listOf("A1", "A2"),
-            totalKzt = 3000
+            seatIds = listOf("A1", "B1"),
+            totalKzt = 5000
         )
 
         val savedBooking = repository.addBooking(booking)
@@ -53,36 +53,37 @@ class BookingRepositoryTest {
         assertNotEquals(0, savedBooking.id)
         assertNotNull(repository.getBookingById(savedBooking.id))
         assertEquals(1, bookings.size)
-        assertEquals(listOf("A1", "A2"), bookings.first().seatIds)
+        assertEquals(listOf("A1", "B1"), bookings.first().seatIds)
     }
 
     @Test
     fun updateBooking_changesStoredBooking() = runBlocking {
         val booking = Booking(
             id = 0,
-            movieId = 1,
+            movieId = 4,
             showtimeId = 402,
             seatIds = listOf("A1"),
-            totalKzt = 1500
+            totalKzt = 2500
         )
 
         val savedBooking = repository.addBooking(booking)
 
-        repository.updateBooking(savedBooking.copy(totalKzt = 2000))
+        repository.updateBooking(savedBooking.copy(seatIds = listOf("B1"), totalKzt = 1))
 
         val result = repository.getBookingById(savedBooking.id)
 
-        assertEquals(2000, result?.totalKzt)
+        assertEquals(listOf("B1"), result?.seatIds)
+        assertEquals(2500, result?.totalKzt)
     }
 
     @Test
     fun deleteBooking_removesStoredBooking() = runBlocking {
         val booking = Booking(
             id = 0,
-            movieId = 1,
+            movieId = 4,
             showtimeId = 402,
             seatIds = listOf("A1"),
-            totalKzt = 1500
+            totalKzt = 2500
         )
 
         val savedBooking = repository.addBooking(booking)
@@ -99,18 +100,18 @@ class BookingRepositoryTest {
     fun observeBookingsByShowtime_returnsOnlyMatchingBookings() = runBlocking {
         val firstBooking = Booking(
             id = 0,
-            movieId = 1,
+            movieId = 4,
             showtimeId = 402,
             seatIds = listOf("A1"),
-            totalKzt = 1500
+            totalKzt = 2500
         )
 
         val secondBooking = Booking(
             id = 0,
-            movieId = 1,
+            movieId = 4,
             showtimeId = 403,
             seatIds = listOf("B1"),
-            totalKzt = 1500
+            totalKzt = 2500
         )
 
         repository.addBooking(firstBooking)
@@ -142,10 +143,10 @@ class BookingRepositoryTest {
 
             val booking = Booking(
                 id = 0,
-                movieId = 1,
+                movieId = 4,
                 showtimeId = 402,
                 seatIds = listOf("A1", "B1"),
-                totalKzt = 3000
+                totalKzt = 5000
             )
 
             val savedBooking = persistentRepository.addBooking(booking)
@@ -166,7 +167,7 @@ class BookingRepositoryTest {
             assertNotNull(result)
             assertEquals(savedBooking.id, result?.id)
             assertEquals(listOf("A1", "B1"), result?.seatIds)
-            assertEquals(3000, result?.totalKzt)
+            assertEquals(5000, result?.totalKzt)
         } finally {
             persistentDatabase.close()
             context.deleteDatabase(databaseName)
@@ -177,20 +178,20 @@ class BookingRepositoryTest {
     fun addBooking_rejectsAlreadyBookedSeatsForSameShowtime() = runBlocking {
         val firstBooking = Booking(
             id = 0,
-            movieId = 1,
+            movieId = 4,
             showtimeId = 402,
-            seatIds = listOf("A1", "A2"),
-            totalKzt = 3000
+            seatIds = listOf("A1", "B1"),
+            totalKzt = 5000
         )
 
         repository.addBooking(firstBooking)
 
         val duplicateBooking = Booking(
             id = 0,
-            movieId = 1,
+            movieId = 4,
             showtimeId = 402,
-            seatIds = listOf("A2", "B1"),
-            totalKzt = 3000
+            seatIds = listOf("B1", "C2"),
+            totalKzt = 5000
         )
 
         try {
@@ -208,18 +209,18 @@ class BookingRepositoryTest {
     fun addBooking_allowsSameSeatForDifferentShowtimes() = runBlocking {
         val firstBooking = Booking(
             id = 0,
-            movieId = 1,
+            movieId = 4,
             showtimeId = 402,
             seatIds = listOf("A1"),
-            totalKzt = 1500
+            totalKzt = 2500
         )
 
         val secondBooking = Booking(
             id = 0,
-            movieId = 1,
+            movieId = 4,
             showtimeId = 403,
             seatIds = listOf("A1"),
-            totalKzt = 1500
+            totalKzt = 2500
         )
 
         repository.addBooking(firstBooking)
@@ -234,10 +235,10 @@ class BookingRepositoryTest {
     fun observeAllBookings_emitsUpdatedDataAfterInsert() = runBlocking {
         val booking = Booking(
             id = 0,
-            movieId = 1,
+            movieId = 4,
             showtimeId = 402,
             seatIds = listOf("C2"),
-            totalKzt = 1500
+            totalKzt = 2500
         )
 
         repository.addBooking(booking)
@@ -246,5 +247,83 @@ class BookingRepositoryTest {
 
         assertEquals(1, result.size)
         assertEquals(listOf("C2"), result.first().seatIds)
+    }
+
+    @Test
+    fun updateBookingSeats_validatesSeatsAndRecalculatesTotal() = runBlocking {
+        val booking = repository.addBooking(Booking(0, 4, 402, listOf("A1"), 2500))
+
+        val updated = repository.updateBookingSeats(booking.id, "C4, B1")
+
+        assertEquals(listOf("B1", "C4"), updated.seatIds)
+        assertEquals(5000, updated.totalKzt)
+        assertEquals(updated, repository.getBookingById(booking.id))
+    }
+
+    @Test
+    fun updateBookingSeats_rejectsOccupiedAndInvalidSeats() = runBlocking {
+        val first = repository.addBooking(Booking(0, 4, 402, listOf("A1"), 2500))
+        val second = repository.addBooking(Booking(0, 4, 402, listOf("B1"), 2500))
+
+        for (input in listOf("A1", "A2", "Z9", "C4, C4")) {
+            try {
+                repository.updateBookingSeats(second.id, input)
+                throw AssertionError("Should reject $input")
+            } catch (_: IllegalArgumentException) {
+                // Invalid or initially occupied seat.
+            } catch (_: IllegalStateException) {
+                // Seat belongs to another booking.
+            }
+        }
+        assertEquals(listOf("A1"), repository.getBookingById(first.id)?.seatIds)
+        assertEquals(listOf("B1"), repository.getBookingById(second.id)?.seatIds)
+    }
+
+    @Test
+    fun addBooking_rejectsInvalidSelectionsBeforeSaving() = runBlocking {
+        val valid = Booking(0, 4, 402, listOf("A1"), 2500)
+        val invalid = listOf(
+            valid.copy(movieId = 1),
+            valid.copy(seatIds = emptyList()),
+            valid.copy(seatIds = listOf("A1", "A1")),
+            valid.copy(seatIds = listOf("Z9")),
+            valid.copy(seatIds = listOf("A2"))
+        )
+        for (booking in invalid) {
+            try {
+                repository.addBooking(booking)
+                throw AssertionError("Invalid booking should be rejected: $booking")
+            } catch (_: IllegalArgumentException) {
+                // Invalid movie, seat or blocked seat.
+            }
+        }
+        assertEquals(emptyList<Booking>(), repository.observeAllBookings().first())
+    }
+
+    @Test
+    fun addBooking_calculatesPriceFromTheSavedSeats() = runBlocking {
+        val saved = repository.addBooking(Booking(0, 4, 402, listOf("C4", "A1"), 1))
+
+        assertEquals(listOf("A1", "C4"), saved.seatIds)
+        assertEquals(5000, saved.totalKzt)
+        assertEquals(saved, repository.getBookingById(saved.id))
+    }
+
+    @Test
+    fun updateBooking_keepsTheOriginalSessionAndRejectsTakenSeats() = runBlocking {
+        val first = repository.addBooking(Booking(0, 4, 402, listOf("A1"), 2500))
+        repository.addBooking(Booking(0, 4, 402, listOf("B1"), 2500))
+
+        for (invalid in listOf(first.copy(movieId = 1), first.copy(seatIds = listOf("B1")))) {
+            try {
+                repository.updateBooking(invalid)
+                throw AssertionError("Invalid update should be rejected")
+            } catch (_: IllegalArgumentException) {
+                // The movie does not match the saved booking.
+            } catch (_: IllegalStateException) {
+                // B1 belongs to another booking.
+            }
+        }
+        assertEquals(first, repository.getBookingById(first.id))
     }
 }

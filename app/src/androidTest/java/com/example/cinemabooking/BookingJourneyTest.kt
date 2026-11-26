@@ -3,6 +3,8 @@ package com.example.cinemabooking
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
@@ -51,6 +53,37 @@ class BookingJourneyTest {
         composeRule.onNodeWithText("18:00").performClick()
         composeRule.onNodeWithText("Choose Seats").performClick()
         composeRule.onNodeWithText("C4").assertIsNotEnabled()
+    }
+
+    @Test fun savedBookingCanBeEditedAndDeletedFromMyBookings() {
+        bookDuneC4()
+        composeRule.onNodeWithText("Back to Movies").performClick()
+        composeRule.onNodeWithText("My Bookings").performClick()
+        composeRule.waitUntil(5_000) {
+            composeRule.onAllNodesWithText("C4").fetchSemanticsNodes().isNotEmpty()
+        }
+        composeRule.onNodeWithText("C4").assertExists()
+
+        composeRule.onNodeWithText("Edit seats").performClick()
+        composeRule.onNodeWithTag("seat-edit").performTextClearance()
+        composeRule.onNodeWithTag("seat-edit").performTextInput("A2")
+        composeRule.onNodeWithText("Save seats").performClick()
+        composeRule.waitUntil(5_000) {
+            composeRule.onAllNodesWithText("A selected seat is unavailable").fetchSemanticsNodes().isNotEmpty()
+        }
+
+        composeRule.onNodeWithTag("seat-edit").performTextClearance()
+        composeRule.onNodeWithTag("seat-edit").performTextInput("A1")
+        composeRule.onNodeWithText("Save seats").performClick()
+        composeRule.waitUntil(5_000) {
+            composeRule.onAllNodesWithText("A1").fetchSemanticsNodes().isNotEmpty()
+        }
+
+        composeRule.onNodeWithText("Delete").performClick()
+        composeRule.onNodeWithText("Delete booking").performClick()
+        composeRule.waitUntil(5_000) {
+            composeRule.onAllNodesWithText("No bookings yet").fetchSemanticsNodes().isNotEmpty()
+        }
     }
 
     private fun bookDuneC4() {

@@ -21,7 +21,6 @@ import com.example.cinemabooking.data.model.Movie
 import com.example.cinemabooking.data.model.Showtime
 import com.example.cinemabooking.ui.components.PosterPlaceholder
 import com.example.cinemabooking.ui.components.ShowtimeButton
-import com.example.cinemabooking.ui.theme.CinemaMuted
 
 @Composable
 fun MovieDetailsScreen(
@@ -39,7 +38,7 @@ fun MovieDetailsScreen(
         TextButton(onClick = onBack) { Text("← Back to Movies") }
         PosterPlaceholder(movie, Modifier.fillMaxWidth().height(210.dp))
         Text(movie.title, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-        Text("${movie.genre}  •  ${movie.durationMinutes} min  •  ${movie.ageRating}", color = CinemaMuted)
+        Text("${movie.genre}  •  ${movie.durationMinutes} min  •  ${movie.ageRating}", color = MaterialTheme.colorScheme.onSurfaceVariant)
         Text(movie.description)
         Text("Today's showtimes", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -51,7 +50,7 @@ fun MovieDetailsScreen(
                 )
             }
         }
-        Text("Hall 2  •  2 500 ₸ per seat", color = CinemaMuted)
+        Text("Hall 2  •  2 500 ₸ per seat", color = MaterialTheme.colorScheme.onSurfaceVariant)
         Button(
             onClick = onChooseSeats,
             enabled = selectedShowtimeId != null,

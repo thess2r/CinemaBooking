@@ -22,7 +22,6 @@ import com.example.cinemabooking.data.model.Showtime
 import com.example.cinemabooking.data.repository.SeatRepository
 import com.example.cinemabooking.ui.components.DetailRow
 import com.example.cinemabooking.ui.components.SeatButton
-import com.example.cinemabooking.ui.theme.CinemaMuted
 import com.example.cinemabooking.ui.viewmodel.calculateTotal
 
 @Composable
@@ -41,9 +40,9 @@ fun SeatSelectionScreen(
     ) {
         TextButton(onClick = onBack) { Text("← Back to Details") }
         Text("Select Seats", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-        Text("${movie.title}  •  Today ${showtime.time}  •  Hall ${showtime.hall}", color = CinemaMuted)
+        Text("${movie.title}  •  Today ${showtime.time}  •  Hall ${showtime.hall}", color = MaterialTheme.colorScheme.onSurfaceVariant)
         HorizontalDivider()
-        Text("SCREEN", modifier = Modifier.fillMaxWidth(), color = CinemaMuted)
+        Text("SCREEN", modifier = Modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.onSurfaceVariant)
         ('A'..'C').forEach { row ->
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                 (1..4).forEach { number ->
@@ -57,7 +56,7 @@ fun SeatSelectionScreen(
                 }
             }
         }
-        Text("Available: outline    Selected: orange    Occupied: disabled", color = CinemaMuted)
+        Text("Available: outline    Selected: filled    Occupied: disabled", color = MaterialTheme.colorScheme.onSurfaceVariant)
         HorizontalDivider()
         DetailRow("Seats", if (selectedSeats.isEmpty()) "None" else selectedSeats.sorted().joinToString(", "))
         DetailRow("Total", "${calculateTotal(showtime.priceKzt, selectedSeats)} ₸")

@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
 fun calculateTotal(priceKzt: Int, selectedSeatIds: Set<String>): Int =
@@ -134,14 +135,21 @@ class CinemaViewModel(
             try {
                 val savedBooking = bookingRepository.addBooking(booking)
 
-                _uiState.update {
-                    it.copy(
+                _uiState.update { current ->
+                    current.copy(
+                        bookings = if (current.bookings.any { it.id == savedBooking.id }) {
+                            current.bookings
+                        } else {
+                            current.bookings + savedBooking
+                        },
                         confirmedBooking = savedBooking,
                         selectedSeats = emptySet()
                     )
                 }
 
                 onResult(savedBooking)
+            } catch (exception: CancellationException) {
+                throw exception
             } catch (exception: Exception) {
                 onResult(null)
             }
