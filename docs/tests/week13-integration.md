@@ -1,6 +1,6 @@
 # Week 13 integration check
 
-Checked on 26 November 2026 with the Pixel 6 API 35 emulator. This is a check of the current integration branch, not a claim that every teammate's pull request is merged into `main`.
+Checked on 26 November 2026 with Pixel 6 API 35 and Medium Phone API 37 emulators. Room PR #8 is merged; these results cover the integration branch before PR #9 is merged into `main`.
 
 | Assignment criterion | Implementation | Check |
 | --- | --- | --- |
@@ -13,7 +13,7 @@ Checked on 26 November 2026 with the Pixel 6 API 35 emulator. This is a check of
 
 Checks run from this branch:
 
-- `./gradlew clean :app:connectedDebugAndroidTest :app:testDebugUnitTest --quiet`: 21 Android tests and 24 JVM tests passed.
+- `./gradlew clean :app:assembleDebug :app:testDebugUnitTest :app:connectedDebugAndroidTest --quiet`: 27 Android tests passed on each emulator, and 41 JVM tests passed.
 - Manual path: Dune: Part Two → 18:00 → C4 → confirm → Ticket → My Bookings → force stop/reopen → My Bookings → delete. The booking remained after reopen and disappeared after delete.
 - Manual network path: airplane mode → Discover error and Retry → restore network → Retry → Studio Ghibli films.
 
@@ -21,14 +21,14 @@ For the demo, show the online Discover list separately from the local Dune booki
 
 ## Berik: My Bookings sort preference and seat validation
 
-Added after the emulator check above. Only the JVM unit tests have been run for these changes; the emulator rows are still to be filled in on the device before the defense.
+The added sorting and validation tests are included in the results above. The preference was also checked after force stopping and reopening the Pixel 6 app.
 
 | ID | Check | Expected result | Status |
 | --- | --- | --- | --- |
 | UNIT-01 | `SeatInputValidatorTest`: trimming, case, blanks, empty items, unknown seats, duplicates | 10 tests pass | Passed (JVM) |
 | UNIT-02 | `BookingSortTest`: three sort orders, stable ties, unknown stored value falls back to default | 7 tests pass | Passed (JVM) |
-| DS-02 | `ThemePreferencesRepositoryTest.bookingSortOrderRemainsSavedForNewRepositoryInstance` | Sort order survives a new repository instance | Not run yet (needs emulator) |
-| DS-03 | Settings: pick "Highest price first", open My Bookings, force stop, reopen | Radio button and My Bookings order both stay on highest price first | Not run yet (needs emulator) |
+| DS-02 | `ThemePreferencesRepositoryTest.bookingSortOrderRemainsSavedForNewRepositoryInstance` | Sort order survives a new repository instance | Passed on both emulators |
+| DS-03 | Settings: pick "Highest price first", force stop, reopen Settings | The radio choice remains selected | Passed manually on Pixel 6; see [screenshot](../screenshots/week13-settings.png) |
 | DB-06 | Create two bookings with different prices, switch each order in Settings | My Bookings reorders and the "Sorted:" caption matches | Not run yet (needs emulator) |
 | DB-07 | Edit a booking and enter `a1, a1` or `D9` | Error message under the field, Room record unchanged | Not run yet (needs emulator) |
 
