@@ -1,6 +1,10 @@
 
 package com.example.cinemabooking.ui.screens
 
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import coil.compose.AsyncImage
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.layout.height
@@ -29,12 +33,30 @@ fun DiscoverScreen(
 ) {
     val uiState by moviesViewModel.uiState.collectAsState()
 
+    var searchQuery by rememberSaveable {
+        mutableStateOf("")
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text(text = "Discover Movies")
+        Text(
+            text = "Discover Movies",
+            style = MaterialTheme.typography.headlineMedium
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = { searchQuery = it },
+            label = { Text("Search movies") },
+            placeholder = { Text("Enter movie title") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -49,17 +71,35 @@ fun DiscoverScreen(
             }
 
             is OnlineMoviesUiState.Success -> {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(
-                        items = state.movies,
-                        key = { movie -> movie.id }
-                    ) { movie ->
-                        OnlineMovieItem(movie)
+
+                val filteredMovies = state.movies.filter { movie ->
+                    movie.title.contains(
+                        searchQuery.trim(),
+                        ignoreCase = true
+                    )
+                }
+
+                if (filteredMovies.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = "No movies found")
+                    }
+                } else {
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(
+                            items = filteredMovies,
+                            key = { movie -> movie.id }
+                        ) { movie ->
+                            OnlineMovieItem(movie)
+                        }
                     }
                 }
             }
+
 
 
             is OnlineMoviesUiState.Error -> {
