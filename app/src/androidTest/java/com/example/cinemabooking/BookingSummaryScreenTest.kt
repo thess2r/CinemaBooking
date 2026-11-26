@@ -26,13 +26,13 @@ class BookingSummaryScreenTest {
                     movie = requireNotNull(MovieRepository.getMovieById(4)),
                     showtime = requireNotNull(ShowtimeRepository.getShowtimeById(402)),
                     selectedSeats = setOf("C4"),
-                    onConfirm = { done -> confirmed = true; done(true) },
+                    onConfirm = { confirmed = true },
                     onBack = {}
                 )
             }
         }
 
-        composeRule.onNodeWithText("Dune: Part Two").assertExists()
+        composeRule.onNodeWithText("Steppe Riders").assertExists()
         composeRule.onNodeWithText("C4").assertExists()
         composeRule.onAllNodesWithText("2 500 ₸").assertCountEquals(2)
         composeRule.onNodeWithText("Confirm Booking").performClick()
@@ -67,7 +67,7 @@ class BookingSummaryScreenTest {
                     movie = requireNotNull(MovieRepository.getMovieById(4)),
                     showtime = requireNotNull(ShowtimeRepository.getShowtimeById(402)),
                     selectedSeats = setOf("C4"),
-                    onConfirm = { done -> confirmed = true; done(true) },
+                    onConfirm = { confirmed = true },
                     onBack = {}
                 )
             }

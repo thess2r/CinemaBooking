@@ -7,9 +7,6 @@ object CinemaRoutes {
     const val SEATS = "seats/{movieId}/{showtimeId}"
     const val SUMMARY = "summary"
     const val TICKET = "ticket"
-    const val SETTINGS = "settings"
-    const val MY_BOOKINGS = "my_bookings"
-    const val DISCOVER = "discover"
 
     fun details(movieId: Int): String {
         require(movieId > 0) { "movieId must be positive" }
