@@ -1,5 +1,10 @@
 package com.example.cinemabooking.navigation
 
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import com.example.cinemabooking.data.database.BookingDatabase
+import com.example.cinemabooking.data.repository.BookingRepository
+import com.example.cinemabooking.ui.viewmodel.CinemaViewModelFactory
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
@@ -19,16 +24,40 @@ import com.example.cinemabooking.navigation.CinemaRoutes.MOVIES
 import com.example.cinemabooking.navigation.CinemaRoutes.SEATS
 import com.example.cinemabooking.navigation.CinemaRoutes.SUMMARY
 import com.example.cinemabooking.navigation.CinemaRoutes.TICKET
+import com.example.cinemabooking.navigation.CinemaRoutes.SETTINGS
+import com.example.cinemabooking.navigation.CinemaRoutes.MY_BOOKINGS
+import com.example.cinemabooking.navigation.CinemaRoutes.DISCOVER
 import com.example.cinemabooking.ui.screens.BookingSummaryScreen
 import com.example.cinemabooking.ui.screens.BookingUnavailableScreen
 import com.example.cinemabooking.ui.screens.MovieDetailsScreen
 import com.example.cinemabooking.ui.screens.MoviesScreen
 import com.example.cinemabooking.ui.screens.SeatSelectionScreen
 import com.example.cinemabooking.ui.screens.TicketScreen
+import com.example.cinemabooking.ui.screens.SettingsScreen
+import com.example.cinemabooking.ui.screens.MyBookingsScreen
+import com.example.cinemabooking.ui.screens.DiscoverScreen
 import com.example.cinemabooking.ui.viewmodel.CinemaViewModel
+import com.example.cinemabooking.ui.viewmodel.BookingsViewModel
+import com.example.cinemabooking.ui.viewmodel.BookingsViewModelFactory
+import com.example.cinemabooking.ui.viewmodel.ThemeViewModel
 
 @Composable
-fun AppNavigation(cinemaViewModel: CinemaViewModel = viewModel()) {
+fun AppNavigation(themeViewModel: ThemeViewModel) {
+    val context = LocalContext.current
+
+    val bookingRepository = remember(context) {
+        BookingRepository(
+            BookingDatabase.getDatabase(context).bookingDao()
+        )
+    }
+
+    val cinemaViewModel: CinemaViewModel = viewModel(
+        factory = CinemaViewModelFactory(bookingRepository)
+    )
+    val bookingsViewModel: BookingsViewModel = viewModel(
+        factory = BookingsViewModelFactory(bookingRepository)
+    )
+
     val navController = rememberNavController()
     val state by cinemaViewModel.uiState.collectAsState()
     val recoverToMovies: () -> Unit = {
@@ -42,10 +71,41 @@ fun AppNavigation(cinemaViewModel: CinemaViewModel = viewModel()) {
         modifier = Modifier.systemBarsPadding()
     ) {
         composable(MOVIES) {
-            MoviesScreen(movies = state.movies) { movieId ->
-                cinemaViewModel.selectMovie(movieId)
-                navController.navigate(CinemaRoutes.details(movieId))
-            }
+            MoviesScreen(
+                movies = state.movies,
+                onMovieClick = { movieId ->
+                    cinemaViewModel.selectMovie(movieId)
+                    navController.navigate(CinemaRoutes.details(movieId))
+                },
+                onSettingsClick = { navController.navigate(SETTINGS) },
+                onMyBookingsClick = { navController.navigate(MY_BOOKINGS) },
+                onDiscoverClick = { navController.navigate(DISCOVER) }
+            )
+        }
+        composable(DISCOVER) {
+            DiscoverScreen(onBack = { navController.navigateUp() })
+        }
+        composable(MY_BOOKINGS) {
+            val bookings by bookingsViewModel.bookings.collectAsState()
+            val sortOrder by themeViewModel.bookingSortOrder.collectAsState()
+            MyBookingsScreen(
+                bookings = bookings,
+                onUpdateSeats = bookingsViewModel::updateSeats,
+                onDelete = bookingsViewModel::deleteBooking,
+                onBack = { navController.navigateUp() },
+                sortOrder = sortOrder
+            )
+        }
+        composable(SETTINGS) {
+            val darkTheme by themeViewModel.darkTheme.collectAsState()
+            val sortOrder by themeViewModel.bookingSortOrder.collectAsState()
+            SettingsScreen(
+                darkTheme = darkTheme,
+                onDarkThemeChange = themeViewModel::setDarkTheme,
+                bookingSortOrder = sortOrder,
+                onBookingSortOrderChange = themeViewModel::setBookingSortOrder,
+                onBack = { navController.navigateUp() }
+            )
         }
         composable(DETAILS, arguments = listOf(navArgument("movieId") { type = NavType.IntType })) { entry ->
             val movieId = entry.arguments?.getInt("movieId") ?: -1
@@ -106,9 +166,16 @@ fun AppNavigation(cinemaViewModel: CinemaViewModel = viewModel()) {
                     movie = movie,
                     showtime = showtime,
                     selectedSeats = state.selectedSeats,
-                    onConfirm = {
-                        if (cinemaViewModel.confirmBooking() != null) {
-                            navController.navigate(TICKET) { popUpTo(MOVIES) { inclusive = false } }
+                    onConfirm = { done ->
+                        cinemaViewModel.confirmBooking { booking ->
+                            done(booking != null)
+                            if (booking != null) {
+                                navController.navigate(TICKET) {
+                                    popUpTo(MOVIES) {
+                                        inclusive = false
+                                    }
+                                }
+                            }
                         }
                     },
                     onBack = { navController.navigateUp() }
