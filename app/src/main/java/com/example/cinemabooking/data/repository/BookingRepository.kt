@@ -26,10 +26,26 @@ class BookingRepository(
     }
 
     suspend fun addBooking(booking: Booking): Booking {
-        val generatedId = bookingDao.insertBookingIfSeatsAvailable(
-            booking.copy(id = 0).toEntity()
+        val showtime = ShowtimeRepository.getShowtimeById(booking.showtimeId)
+            ?: throw IllegalArgumentException("Session not found")
+        require(showtime.movieId == booking.movieId) { "Movie and session do not match" }
+        require(
+            booking.seatIds.isNotEmpty() &&
+                booking.seatIds.all { it in SeatRepository.allSeats } &&
+                booking.seatIds.size == booking.seatIds.toSet().size
+        ) { "Choose unique seats from A1 to C4" }
+        require(booking.seatIds.none { it in SeatRepository.initialOccupiedSeats(booking.showtimeId) }) {
+            "A selected seat is unavailable"
+        }
+        val validBooking = booking.copy(
+            id = 0,
+            seatIds = booking.seatIds.sorted(),
+            totalKzt = showtime.priceKzt * booking.seatIds.size
         )
-        return booking.copy(id = generatedId.toInt())
+        val generatedId = bookingDao.insertBookingIfSeatsAvailable(
+            validBooking.toEntity()
+        )
+        return validBooking.copy(id = generatedId.toInt())
     }
 
     suspend fun updateBooking(booking: Booking) {

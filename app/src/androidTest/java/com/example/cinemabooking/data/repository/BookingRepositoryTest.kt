@@ -41,9 +41,9 @@ class BookingRepositoryTest {
     fun addBooking_savesBookingToDatabase() = runBlocking {
         val booking = Booking(
             id = 0,
-            movieId = 1,
+            movieId = 4,
             showtimeId = 402,
-            seatIds = listOf("A1", "A2"),
+            seatIds = listOf("A1", "B1"),
             totalKzt = 3000
         )
 
@@ -53,14 +53,14 @@ class BookingRepositoryTest {
         assertNotEquals(0, savedBooking.id)
         assertNotNull(repository.getBookingById(savedBooking.id))
         assertEquals(1, bookings.size)
-        assertEquals(listOf("A1", "A2"), bookings.first().seatIds)
+        assertEquals(listOf("A1", "B1"), bookings.first().seatIds)
     }
 
     @Test
     fun updateBooking_changesStoredBooking() = runBlocking {
         val booking = Booking(
             id = 0,
-            movieId = 1,
+            movieId = 4,
             showtimeId = 402,
             seatIds = listOf("A1"),
             totalKzt = 1500
@@ -79,7 +79,7 @@ class BookingRepositoryTest {
     fun deleteBooking_removesStoredBooking() = runBlocking {
         val booking = Booking(
             id = 0,
-            movieId = 1,
+            movieId = 4,
             showtimeId = 402,
             seatIds = listOf("A1"),
             totalKzt = 1500
@@ -99,7 +99,7 @@ class BookingRepositoryTest {
     fun observeBookingsByShowtime_returnsOnlyMatchingBookings() = runBlocking {
         val firstBooking = Booking(
             id = 0,
-            movieId = 1,
+            movieId = 4,
             showtimeId = 402,
             seatIds = listOf("A1"),
             totalKzt = 1500
@@ -107,7 +107,7 @@ class BookingRepositoryTest {
 
         val secondBooking = Booking(
             id = 0,
-            movieId = 1,
+            movieId = 4,
             showtimeId = 403,
             seatIds = listOf("B1"),
             totalKzt = 1500
@@ -142,7 +142,7 @@ class BookingRepositoryTest {
 
             val booking = Booking(
                 id = 0,
-                movieId = 1,
+                movieId = 4,
                 showtimeId = 402,
                 seatIds = listOf("A1", "B1"),
                 totalKzt = 3000
@@ -166,7 +166,7 @@ class BookingRepositoryTest {
             assertNotNull(result)
             assertEquals(savedBooking.id, result?.id)
             assertEquals(listOf("A1", "B1"), result?.seatIds)
-            assertEquals(3000, result?.totalKzt)
+            assertEquals(5000, result?.totalKzt)
         } finally {
             persistentDatabase.close()
             context.deleteDatabase(databaseName)
@@ -177,9 +177,9 @@ class BookingRepositoryTest {
     fun addBooking_rejectsAlreadyBookedSeatsForSameShowtime() = runBlocking {
         val firstBooking = Booking(
             id = 0,
-            movieId = 1,
+            movieId = 4,
             showtimeId = 402,
-            seatIds = listOf("A1", "A2"),
+            seatIds = listOf("A1", "B1"),
             totalKzt = 3000
         )
 
@@ -187,9 +187,9 @@ class BookingRepositoryTest {
 
         val duplicateBooking = Booking(
             id = 0,
-            movieId = 1,
+            movieId = 4,
             showtimeId = 402,
-            seatIds = listOf("A2", "B1"),
+            seatIds = listOf("B1", "C2"),
             totalKzt = 3000
         )
 
@@ -208,7 +208,7 @@ class BookingRepositoryTest {
     fun addBooking_allowsSameSeatForDifferentShowtimes() = runBlocking {
         val firstBooking = Booking(
             id = 0,
-            movieId = 1,
+            movieId = 4,
             showtimeId = 402,
             seatIds = listOf("A1"),
             totalKzt = 1500
@@ -216,7 +216,7 @@ class BookingRepositoryTest {
 
         val secondBooking = Booking(
             id = 0,
-            movieId = 1,
+            movieId = 4,
             showtimeId = 403,
             seatIds = listOf("A1"),
             totalKzt = 1500
@@ -234,7 +234,7 @@ class BookingRepositoryTest {
     fun observeAllBookings_emitsUpdatedDataAfterInsert() = runBlocking {
         val booking = Booking(
             id = 0,
-            movieId = 1,
+            movieId = 4,
             showtimeId = 402,
             seatIds = listOf("C2"),
             totalKzt = 1500
@@ -276,5 +276,35 @@ class BookingRepositoryTest {
         }
         assertEquals(listOf("A1"), repository.getBookingById(first.id)?.seatIds)
         assertEquals(listOf("B1"), repository.getBookingById(second.id)?.seatIds)
+    }
+
+    @Test
+    fun addBooking_rejectsInvalidSelectionsBeforeSaving() = runBlocking {
+        val valid = Booking(0, 4, 402, listOf("A1"), 2500)
+        val invalid = listOf(
+            valid.copy(movieId = 1),
+            valid.copy(seatIds = emptyList()),
+            valid.copy(seatIds = listOf("A1", "A1")),
+            valid.copy(seatIds = listOf("Z9")),
+            valid.copy(seatIds = listOf("A2"))
+        )
+        for (booking in invalid) {
+            try {
+                repository.addBooking(booking)
+                throw AssertionError("Invalid booking should be rejected: $booking")
+            } catch (_: IllegalArgumentException) {
+                // Invalid movie, seat or blocked seat.
+            }
+        }
+        assertEquals(emptyList<Booking>(), repository.observeAllBookings().first())
+    }
+
+    @Test
+    fun addBooking_calculatesPriceFromTheSavedSeats() = runBlocking {
+        val saved = repository.addBooking(Booking(0, 4, 402, listOf("C4", "A1"), 1))
+
+        assertEquals(listOf("A1", "C4"), saved.seatIds)
+        assertEquals(5000, saved.totalKzt)
+        assertEquals(saved, repository.getBookingById(saved.id))
     }
 }
