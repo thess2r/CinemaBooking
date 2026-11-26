@@ -16,7 +16,7 @@ Cinema Kit is an Android demo for choosing a movie, showtime and seats, then vie
 - Twelve seats, occupied seat protection and live price calculation
 - Booking summary with a confirmation dialog and a demo ticket that can be copied or shared
 - `movieId` and `showtimeId` route arguments with working back navigation and a recovery screen for missing booking data
-- Discover screen with live Studio Ghibli films from a public REST API through Retrofit, including loading, success, empty, error and Retry states; Coil loads online posters
+- Discover screen with live Studio Ghibli films from a public REST API through Retrofit, title search, loading, success, empty, error and Retry states; Coil loads online posters
 - Room database for saved bookings, with a My Bookings screen to read, edit seats and delete records
 - Dark theme preference saved with DataStore and applied to the whole app
 - Second DataStore preference: Settings lets you choose the My Bookings order (newest first, oldest first, highest price first); the choice survives closing the app
