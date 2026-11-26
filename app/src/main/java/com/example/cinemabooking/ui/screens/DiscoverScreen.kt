@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.platform.testTag
 import com.example.cinemabooking.R
 import com.example.cinemabooking.data.remote.model.OnlineMovie
 import com.example.cinemabooking.ui.viewmodel.OnlineMoviesUiState
@@ -60,7 +61,7 @@ fun DiscoverScreen(
             label = { Text("Search movies") },
             placeholder = { Text("Enter movie title") },
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().testTag("discover-search")
         )
 
         Spacer(modifier = Modifier.height(16.dp))
