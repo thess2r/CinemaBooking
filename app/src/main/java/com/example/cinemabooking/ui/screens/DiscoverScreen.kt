@@ -2,6 +2,9 @@
 package com.example.cinemabooking.ui.screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -12,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
+import com.example.cinemabooking.data.remote.model.OnlineMovie
 import com.example.cinemabooking.ui.viewmodel.OnlineMoviesUiState
 import com.example.cinemabooking.ui.viewmodel.OnlineMoviesViewModel
 
@@ -24,31 +28,65 @@ fun DiscoverScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(16.dp)
     ) {
-
         Text(text = "Discover Movies")
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        when (uiState) {
-
+        when (val state = uiState) {
             is OnlineMoviesUiState.Loading -> {
-                CircularProgressIndicator()
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
             }
 
             is OnlineMoviesUiState.Success -> {
-                Text(text = "Movies loaded successfully")
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(
+                        items = state.movies,
+                        key = { movie -> movie.id }
+                    ) { movie ->
+                        OnlineMovieItem(movie)
+                    }
+                }
             }
 
             is OnlineMoviesUiState.Error -> {
-                Text(text = "Failed to load movies")
+                Text(text = state.message)
             }
 
             is OnlineMoviesUiState.Empty -> {
                 Text(text = "No movies available")
             }
+        }
+    }
+}
+
+@Composable
+fun OnlineMovieItem(movie: OnlineMovie) {
+    Card(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(text = movie.title)
+
+            Text(
+                text = "Duration: ${movie.runningTime} min"
+            )
+
+            Text(
+                text = movie.description,
+                maxLines = 3
+            )
         }
     }
 }
