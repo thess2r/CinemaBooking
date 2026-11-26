@@ -21,6 +21,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.draw.clipToBounds
 import com.example.cinemabooking.R
 import com.example.cinemabooking.data.remote.model.OnlineMovie
 import com.example.cinemabooking.ui.viewmodel.OnlineMoviesUiState
@@ -132,12 +133,14 @@ fun OnlineMovieItem(movie: OnlineMovie) {
             AsyncImage(
                 model = movie.image,
                 contentDescription = "Poster of ${movie.title}",
-                error = painterResource(R.drawable.ic_launcher_foreground),
-                fallback = painterResource(R.drawable.ic_launcher_foreground),
+                placeholder = painterResource(R.drawable.poster_placeholder),
+                error = painterResource(R.drawable.poster_placeholder),
+                fallback = painterResource(R.drawable.poster_placeholder),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(220.dp)
+                    .clipToBounds()
             )
 
             Text(text = movie.title)

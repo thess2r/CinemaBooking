@@ -49,9 +49,11 @@ The [booking and navigation flow](docs/booking-flow.md) maps the original routes
 
 ## Week 13 demonstration
 
-1. Open Discover with internet access. The film list and posters come from the API. Turn off the emulator network, reopen Discover and show the error and Retry; restore the network and retry. The empty response is covered by a fake repository unit test.
+1. Open Discover with internet access. The film list and poster URLs come from the API; a local image appears if a poster cannot load. Turn off the emulator network, reopen Discover and show the error and Retry; restore the network and retry. The empty response is covered by a fake repository unit test.
 2. Book Dune at 18:00 in C4. Open My Bookings and show the saved record. Edit it to another free seat, then close and reopen the app: the changed record and occupied seat remain. Delete the booking and show that the seat becomes free.
 3. In Settings, enable Dark theme. Close and reopen the app to show the switch and app colors remain dark.
 4. Show the successful build and tests, GitHub commits and each member's own contribution.
 
 Each member should understand and explain their own files. The online catalog and local booking schedule are deliberately separate: the external API does not provide showtimes or available seats.
+
+The observed emulator checks and assignment criteria are recorded in [Week 13 integration check](docs/tests/week13-integration.md).

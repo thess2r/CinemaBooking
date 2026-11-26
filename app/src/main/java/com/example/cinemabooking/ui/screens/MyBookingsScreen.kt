@@ -21,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.example.cinemabooking.data.model.Booking
 import com.example.cinemabooking.data.repository.MovieRepository
@@ -82,7 +83,7 @@ private fun BookingCard(
                     onValueChange = { seatInput = it; error = null },
                     label = { Text("Seats, for example A1, C4") },
                     singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth().testTag("seat-edit")
                 )
                 if (error != null) Text(error!!, color = MaterialTheme.colorScheme.error)
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
