@@ -87,18 +87,23 @@ fun AppNavigation(themeViewModel: ThemeViewModel) {
         }
         composable(MY_BOOKINGS) {
             val bookings by bookingsViewModel.bookings.collectAsState()
+            val sortOrder by themeViewModel.bookingSortOrder.collectAsState()
             MyBookingsScreen(
                 bookings = bookings,
                 onUpdateSeats = bookingsViewModel::updateSeats,
                 onDelete = bookingsViewModel::deleteBooking,
-                onBack = { navController.navigateUp() }
+                onBack = { navController.navigateUp() },
+                sortOrder = sortOrder
             )
         }
         composable(SETTINGS) {
             val darkTheme by themeViewModel.darkTheme.collectAsState()
+            val sortOrder by themeViewModel.bookingSortOrder.collectAsState()
             SettingsScreen(
                 darkTheme = darkTheme,
                 onDarkThemeChange = themeViewModel::setDarkTheme,
+                bookingSortOrder = sortOrder,
+                onBookingSortOrderChange = themeViewModel::setBookingSortOrder,
                 onBack = { navController.navigateUp() }
             )
         }

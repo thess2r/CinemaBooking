@@ -24,6 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.example.cinemabooking.data.model.Booking
+import com.example.cinemabooking.data.model.BookingSortOrder
+import com.example.cinemabooking.data.model.sortBookings
 import com.example.cinemabooking.data.repository.MovieRepository
 import com.example.cinemabooking.data.repository.ShowtimeRepository
 import com.example.cinemabooking.ui.booking.formatPriceKzt
@@ -34,16 +36,25 @@ fun MyBookingsScreen(
     bookings: List<Booking>,
     onUpdateSeats: (Int, String, (String?) -> Unit) -> Unit,
     onDelete: (Booking) -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    sortOrder: BookingSortOrder = BookingSortOrder.Default
 ) {
+    val sortedBookings = remember(bookings, sortOrder) { sortBookings(bookings, sortOrder) }
     Column(modifier = Modifier.fillMaxSize().padding(20.dp)) {
         TextButton(onClick = onBack) { Text("← Back to Movies") }
         Text("My Bookings", style = MaterialTheme.typography.headlineMedium)
-        if (bookings.isEmpty()) {
+        if (sortedBookings.isNotEmpty()) {
+            Text(
+                "Sorted: ${sortOrder.label}",
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+        if (sortedBookings.isEmpty()) {
             Text("No bookings yet", modifier = Modifier.padding(top = 24.dp))
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                items(bookings, key = { it.id }) { booking ->
+                items(sortedBookings, key = { it.id }) { booking ->
                     BookingCard(booking, onUpdateSeats, onDelete)
                 }
             }
