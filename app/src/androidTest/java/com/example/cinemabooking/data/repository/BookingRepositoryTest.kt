@@ -44,7 +44,7 @@ class BookingRepositoryTest {
             movieId = 4,
             showtimeId = 402,
             seatIds = listOf("A1", "B1"),
-            totalKzt = 3000
+            totalKzt = 5000
         )
 
         val savedBooking = repository.addBooking(booking)
@@ -63,16 +63,17 @@ class BookingRepositoryTest {
             movieId = 4,
             showtimeId = 402,
             seatIds = listOf("A1"),
-            totalKzt = 1500
+            totalKzt = 2500
         )
 
         val savedBooking = repository.addBooking(booking)
 
-        repository.updateBooking(savedBooking.copy(totalKzt = 2000))
+        repository.updateBooking(savedBooking.copy(seatIds = listOf("B1"), totalKzt = 1))
 
         val result = repository.getBookingById(savedBooking.id)
 
-        assertEquals(2000, result?.totalKzt)
+        assertEquals(listOf("B1"), result?.seatIds)
+        assertEquals(2500, result?.totalKzt)
     }
 
     @Test
@@ -82,7 +83,7 @@ class BookingRepositoryTest {
             movieId = 4,
             showtimeId = 402,
             seatIds = listOf("A1"),
-            totalKzt = 1500
+            totalKzt = 2500
         )
 
         val savedBooking = repository.addBooking(booking)
@@ -102,7 +103,7 @@ class BookingRepositoryTest {
             movieId = 4,
             showtimeId = 402,
             seatIds = listOf("A1"),
-            totalKzt = 1500
+            totalKzt = 2500
         )
 
         val secondBooking = Booking(
@@ -110,7 +111,7 @@ class BookingRepositoryTest {
             movieId = 4,
             showtimeId = 403,
             seatIds = listOf("B1"),
-            totalKzt = 1500
+            totalKzt = 2500
         )
 
         repository.addBooking(firstBooking)
@@ -145,7 +146,7 @@ class BookingRepositoryTest {
                 movieId = 4,
                 showtimeId = 402,
                 seatIds = listOf("A1", "B1"),
-                totalKzt = 3000
+                totalKzt = 5000
             )
 
             val savedBooking = persistentRepository.addBooking(booking)
@@ -180,7 +181,7 @@ class BookingRepositoryTest {
             movieId = 4,
             showtimeId = 402,
             seatIds = listOf("A1", "B1"),
-            totalKzt = 3000
+            totalKzt = 5000
         )
 
         repository.addBooking(firstBooking)
@@ -190,7 +191,7 @@ class BookingRepositoryTest {
             movieId = 4,
             showtimeId = 402,
             seatIds = listOf("B1", "C2"),
-            totalKzt = 3000
+            totalKzt = 5000
         )
 
         try {
@@ -211,7 +212,7 @@ class BookingRepositoryTest {
             movieId = 4,
             showtimeId = 402,
             seatIds = listOf("A1"),
-            totalKzt = 1500
+            totalKzt = 2500
         )
 
         val secondBooking = Booking(
@@ -219,7 +220,7 @@ class BookingRepositoryTest {
             movieId = 4,
             showtimeId = 403,
             seatIds = listOf("A1"),
-            totalKzt = 1500
+            totalKzt = 2500
         )
 
         repository.addBooking(firstBooking)
@@ -237,7 +238,7 @@ class BookingRepositoryTest {
             movieId = 4,
             showtimeId = 402,
             seatIds = listOf("C2"),
-            totalKzt = 1500
+            totalKzt = 2500
         )
 
         repository.addBooking(booking)
@@ -306,5 +307,23 @@ class BookingRepositoryTest {
         assertEquals(listOf("A1", "C4"), saved.seatIds)
         assertEquals(5000, saved.totalKzt)
         assertEquals(saved, repository.getBookingById(saved.id))
+    }
+
+    @Test
+    fun updateBooking_keepsTheOriginalSessionAndRejectsTakenSeats() = runBlocking {
+        val first = repository.addBooking(Booking(0, 4, 402, listOf("A1"), 2500))
+        repository.addBooking(Booking(0, 4, 402, listOf("B1"), 2500))
+
+        for (invalid in listOf(first.copy(movieId = 1), first.copy(seatIds = listOf("B1")))) {
+            try {
+                repository.updateBooking(invalid)
+                throw AssertionError("Invalid update should be rejected")
+            } catch (_: IllegalArgumentException) {
+                // The movie does not match the saved booking.
+            } catch (_: IllegalStateException) {
+                // B1 belongs to another booking.
+            }
+        }
+        assertEquals(first, repository.getBookingById(first.id))
     }
 }

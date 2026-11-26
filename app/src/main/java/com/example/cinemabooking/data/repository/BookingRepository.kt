@@ -49,7 +49,12 @@ class BookingRepository(
     }
 
     suspend fun updateBooking(booking: Booking) {
-        bookingDao.updateBooking(booking.toEntity())
+        val saved = getBookingById(booking.id)
+            ?: throw IllegalArgumentException("Booking not found")
+        require(saved.movieId == booking.movieId && saved.showtimeId == booking.showtimeId) {
+            "Movie and session cannot be changed"
+        }
+        updateBookingSeats(booking.id, booking.seatIds.joinToString(","))
     }
 
     suspend fun updateBookingSeats(bookingId: Int, input: String): Booking {
