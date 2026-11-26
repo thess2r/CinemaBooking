@@ -3,6 +3,7 @@ package com.example.cinemabooking.data.repository
 import com.example.cinemabooking.data.dao.BookingDao
 import com.example.cinemabooking.data.entity.BookingEntity
 import com.example.cinemabooking.data.model.Booking
+import com.example.cinemabooking.data.validation.SeatInputValidator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -29,11 +30,9 @@ class BookingRepository(
         val showtime = ShowtimeRepository.getShowtimeById(booking.showtimeId)
             ?: throw IllegalArgumentException("Session not found")
         require(showtime.movieId == booking.movieId) { "Movie and session do not match" }
-        require(
-            booking.seatIds.isNotEmpty() &&
-                booking.seatIds.all { it in SeatRepository.allSeats } &&
-                booking.seatIds.size == booking.seatIds.toSet().size
-        ) { "Choose unique seats from A1 to C4" }
+        require(SeatInputValidator.isValidSelection(booking.seatIds)) {
+            "Choose unique seats from A1 to C4"
+        }
         require(booking.seatIds.none { it in SeatRepository.initialOccupiedSeats(booking.showtimeId) }) {
             "A selected seat is unavailable"
         }
@@ -60,12 +59,8 @@ class BookingRepository(
     suspend fun updateBookingSeats(bookingId: Int, input: String): Booking {
         val booking = getBookingById(bookingId)
             ?: throw IllegalArgumentException("Booking not found")
-        val seats = input.split(",").map { it.trim().uppercase() }
-        if (seats.isEmpty() || seats.any { it.isBlank() || it !in SeatRepository.allSeats } ||
-            seats.size != seats.toSet().size
-        ) {
-            throw IllegalArgumentException("Enter unique seats from A1 to C4, separated by commas")
-        }
+        val seats = SeatInputValidator.parse(input)
+            ?: throw IllegalArgumentException(SeatInputValidator.INVALID_INPUT_MESSAGE)
         if (seats.any { it in SeatRepository.initialOccupiedSeats(booking.showtimeId) }) {
             throw IllegalArgumentException("A selected seat is unavailable")
         }
