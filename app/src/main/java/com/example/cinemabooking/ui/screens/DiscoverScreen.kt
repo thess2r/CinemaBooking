@@ -1,6 +1,9 @@
 
 package com.example.cinemabooking.ui.screens
 
+import coil.compose.AsyncImage
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -68,6 +71,7 @@ fun DiscoverScreen(
     }
 }
 
+
 @Composable
 fun OnlineMovieItem(movie: OnlineMovie) {
     Card(
@@ -77,6 +81,17 @@ fun OnlineMovieItem(movie: OnlineMovie) {
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+
+
+            AsyncImage(
+                model = movie.image,
+                contentDescription = "Poster of ${movie.title}",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(220.dp)
+            )
+
             Text(text = movie.title)
 
             Text(
