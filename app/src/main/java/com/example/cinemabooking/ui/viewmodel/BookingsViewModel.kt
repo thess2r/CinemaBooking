@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.CancellationException
 
 class BookingsViewModel(
     private val bookingRepository: BookingRepository
@@ -29,6 +30,19 @@ class BookingsViewModel(
     fun updateBooking(booking: Booking) {
         viewModelScope.launch {
             bookingRepository.updateBooking(booking)
+        }
+    }
+
+    fun updateSeats(bookingId: Int, input: String, onResult: (String?) -> Unit) {
+        viewModelScope.launch {
+            try {
+                bookingRepository.updateBookingSeats(bookingId, input)
+                onResult(null)
+            } catch (exception: CancellationException) {
+                throw exception
+            } catch (exception: Exception) {
+                onResult(exception.message ?: "Could not update booking")
+            }
         }
     }
 

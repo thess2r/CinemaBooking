@@ -26,7 +26,6 @@ import com.example.cinemabooking.data.model.Movie
 import com.example.cinemabooking.data.model.Showtime
 import com.example.cinemabooking.ui.booking.formatPriceKzt
 import com.example.cinemabooking.ui.components.DetailRow
-import com.example.cinemabooking.ui.theme.CinemaSurface
 import com.example.cinemabooking.ui.viewmodel.calculateTotal
 
 @Composable
@@ -34,10 +33,12 @@ fun BookingSummaryScreen(
     movie: Movie,
     showtime: Showtime,
     selectedSeats: Set<String>,
-    onConfirm: () -> Unit,
+    onConfirm: ((Boolean) -> Unit) -> Unit,
     onBack: () -> Unit
 ) {
     var confirmationOpen by remember { mutableStateOf(false) }
+    var saving by remember { mutableStateOf(false) }
+    var saveError by remember { mutableStateOf(false) }
     Column(
         Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
@@ -45,7 +46,7 @@ fun BookingSummaryScreen(
         TextButton(onClick = onBack) { Text("← Back to Seats") }
         Text("Booking Summary", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
         Text("Check your selection before confirming.")
-        Card(colors = CardDefaults.cardColors(containerColor = CinemaSurface)) {
+        Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
             Column(Modifier.padding(20.dp)) {
                 DetailRow("Movie", movie.title)
                 DetailRow("Date", "Today")
@@ -57,9 +58,10 @@ fun BookingSummaryScreen(
                 DetailRow("Total", formatPriceKzt(calculateTotal(showtime.priceKzt, selectedSeats)))
             }
         }
-        Button(onClick = { confirmationOpen = true }, enabled = selectedSeats.isNotEmpty(), modifier = Modifier.fillMaxWidth()) {
-            Text("Confirm Booking")
+        Button(onClick = { confirmationOpen = true }, enabled = selectedSeats.isNotEmpty() && !saving, modifier = Modifier.fillMaxWidth()) {
+            Text(if (saving) "Saving booking..." else "Confirm Booking")
         }
+        if (saveError) Text("Could not save booking. Check the seats and try again.", color = MaterialTheme.colorScheme.error)
         Text("This is a demo booking. No payment is collected.")
     }
     if (confirmationOpen) {
@@ -73,7 +75,12 @@ fun BookingSummaryScreen(
             confirmButton = {
                 TextButton(onClick = {
                     confirmationOpen = false
-                    onConfirm()
+                    saving = true
+                    saveError = false
+                    onConfirm { success ->
+                        saving = false
+                        saveError = !success
+                    }
                 }) { Text("Book seats") }
             },
             dismissButton = {

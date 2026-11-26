@@ -247,4 +247,34 @@ class BookingRepositoryTest {
         assertEquals(1, result.size)
         assertEquals(listOf("C2"), result.first().seatIds)
     }
+
+    @Test
+    fun updateBookingSeats_validatesSeatsAndRecalculatesTotal() = runBlocking {
+        val booking = repository.addBooking(Booking(0, 4, 402, listOf("A1"), 2500))
+
+        val updated = repository.updateBookingSeats(booking.id, "C4, B1")
+
+        assertEquals(listOf("B1", "C4"), updated.seatIds)
+        assertEquals(5000, updated.totalKzt)
+        assertEquals(updated, repository.getBookingById(booking.id))
+    }
+
+    @Test
+    fun updateBookingSeats_rejectsOccupiedAndInvalidSeats() = runBlocking {
+        val first = repository.addBooking(Booking(0, 4, 402, listOf("A1"), 2500))
+        val second = repository.addBooking(Booking(0, 4, 402, listOf("B1"), 2500))
+
+        for (input in listOf("A1", "A2", "Z9", "C4, C4")) {
+            try {
+                repository.updateBookingSeats(second.id, input)
+                throw AssertionError("Should reject $input")
+            } catch (_: IllegalArgumentException) {
+                // Invalid or initially occupied seat.
+            } catch (_: IllegalStateException) {
+                // Seat belongs to another booking.
+            }
+        }
+        assertEquals(listOf("A1"), repository.getBookingById(first.id)?.seatIds)
+        assertEquals(listOf("B1"), repository.getBookingById(second.id)?.seatIds)
+    }
 }

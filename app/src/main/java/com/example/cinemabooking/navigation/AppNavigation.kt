@@ -24,16 +24,23 @@ import com.example.cinemabooking.navigation.CinemaRoutes.MOVIES
 import com.example.cinemabooking.navigation.CinemaRoutes.SEATS
 import com.example.cinemabooking.navigation.CinemaRoutes.SUMMARY
 import com.example.cinemabooking.navigation.CinemaRoutes.TICKET
+import com.example.cinemabooking.navigation.CinemaRoutes.SETTINGS
+import com.example.cinemabooking.navigation.CinemaRoutes.MY_BOOKINGS
 import com.example.cinemabooking.ui.screens.BookingSummaryScreen
 import com.example.cinemabooking.ui.screens.BookingUnavailableScreen
 import com.example.cinemabooking.ui.screens.MovieDetailsScreen
 import com.example.cinemabooking.ui.screens.MoviesScreen
 import com.example.cinemabooking.ui.screens.SeatSelectionScreen
 import com.example.cinemabooking.ui.screens.TicketScreen
+import com.example.cinemabooking.ui.screens.SettingsScreen
+import com.example.cinemabooking.ui.screens.MyBookingsScreen
 import com.example.cinemabooking.ui.viewmodel.CinemaViewModel
+import com.example.cinemabooking.ui.viewmodel.BookingsViewModel
+import com.example.cinemabooking.ui.viewmodel.BookingsViewModelFactory
+import com.example.cinemabooking.ui.viewmodel.ThemeViewModel
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(themeViewModel: ThemeViewModel) {
     val context = LocalContext.current
 
     val bookingRepository = remember(context) {
@@ -44,6 +51,9 @@ fun AppNavigation() {
 
     val cinemaViewModel: CinemaViewModel = viewModel(
         factory = CinemaViewModelFactory(bookingRepository)
+    )
+    val bookingsViewModel: BookingsViewModel = viewModel(
+        factory = BookingsViewModelFactory(bookingRepository)
     )
 
     val navController = rememberNavController()
@@ -59,10 +69,32 @@ fun AppNavigation() {
         modifier = Modifier.systemBarsPadding()
     ) {
         composable(MOVIES) {
-            MoviesScreen(movies = state.movies) { movieId ->
-                cinemaViewModel.selectMovie(movieId)
-                navController.navigate(CinemaRoutes.details(movieId))
-            }
+            MoviesScreen(
+                movies = state.movies,
+                onMovieClick = { movieId ->
+                    cinemaViewModel.selectMovie(movieId)
+                    navController.navigate(CinemaRoutes.details(movieId))
+                },
+                onSettingsClick = { navController.navigate(SETTINGS) },
+                onMyBookingsClick = { navController.navigate(MY_BOOKINGS) }
+            )
+        }
+        composable(MY_BOOKINGS) {
+            val bookings by bookingsViewModel.bookings.collectAsState()
+            MyBookingsScreen(
+                bookings = bookings,
+                onUpdateSeats = bookingsViewModel::updateSeats,
+                onDelete = bookingsViewModel::deleteBooking,
+                onBack = { navController.navigateUp() }
+            )
+        }
+        composable(SETTINGS) {
+            val darkTheme by themeViewModel.darkTheme.collectAsState()
+            SettingsScreen(
+                darkTheme = darkTheme,
+                onDarkThemeChange = themeViewModel::setDarkTheme,
+                onBack = { navController.navigateUp() }
+            )
         }
         composable(DETAILS, arguments = listOf(navArgument("movieId") { type = NavType.IntType })) { entry ->
             val movieId = entry.arguments?.getInt("movieId") ?: -1
@@ -123,8 +155,9 @@ fun AppNavigation() {
                     movie = movie,
                     showtime = showtime,
                     selectedSeats = state.selectedSeats,
-                    onConfirm = {
+                    onConfirm = { done ->
                         cinemaViewModel.confirmBooking { booking ->
+                            done(booking != null)
                             if (booking != null) {
                                 navController.navigate(TICKET) {
                                     popUpTo(MOVIES) {

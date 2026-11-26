@@ -36,6 +36,28 @@ class BookingRepository(
         bookingDao.updateBooking(booking.toEntity())
     }
 
+    suspend fun updateBookingSeats(bookingId: Int, input: String): Booking {
+        val booking = getBookingById(bookingId)
+            ?: throw IllegalArgumentException("Booking not found")
+        val seats = input.split(",").map { it.trim().uppercase() }
+        if (seats.isEmpty() || seats.any { it.isBlank() || it !in SeatRepository.allSeats } ||
+            seats.size != seats.toSet().size
+        ) {
+            throw IllegalArgumentException("Enter unique seats from A1 to C4, separated by commas")
+        }
+        if (seats.any { it in SeatRepository.initialOccupiedSeats(booking.showtimeId) }) {
+            throw IllegalArgumentException("A selected seat is unavailable")
+        }
+        val showtime = ShowtimeRepository.getShowtimeById(booking.showtimeId)
+            ?: throw IllegalArgumentException("Session not found")
+        val updated = booking.copy(
+            seatIds = seats.sorted(),
+            totalKzt = showtime.priceKzt * seats.size
+        )
+        bookingDao.updateBookingIfSeatsAvailable(updated.toEntity())
+        return updated
+    }
+
     suspend fun deleteBooking(booking: Booking) {
         bookingDao.deleteBooking(booking.toEntity())
     }

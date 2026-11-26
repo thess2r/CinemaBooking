@@ -19,22 +19,17 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cinemabooking.data.model.Movie
 import com.example.cinemabooking.data.repository.MovieRepository
-
-private val CardBackground = Color(0xFFFAF8F5)
-private val TextColor = Color(0xFF1E1A17)
-private val AccentColor = Color(0xFFC6512D)
-private val MutedColor = Color(0xFF756F68)
 
 @Composable
 fun MovieCard(
@@ -45,7 +40,7 @@ fun MovieCard(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = CardBackground
+            containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
         Column(
@@ -58,7 +53,7 @@ fun MovieCard(
                     .fillMaxWidth()
                     .height(180.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFFE3DDD6)),
+                    .background(MaterialTheme.colorScheme.outline),
                 contentAlignment = Alignment.Center
             ) {
                 val posterId = movie.posterResId
@@ -74,7 +69,7 @@ fun MovieCard(
                     Text(
                         text = "CINEMA KIT",
                         fontSize = 16.sp,
-                        color = MutedColor
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -84,13 +79,13 @@ fun MovieCard(
                 text = movie.title,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextColor
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             Text(
                 text = movie.genre,
                 fontSize = 14.sp,
-                color = MutedColor
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Row(
@@ -99,13 +94,13 @@ fun MovieCard(
                 Text(
                     text = "${movie.durationMinutes} min",
                     fontSize = 14.sp,
-                    color = MutedColor
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Text(
                     text = movie.ageRating,
                     fontSize = 14.sp,
-                    color = MutedColor
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
@@ -113,7 +108,7 @@ fun MovieCard(
                 onClick = { onDetailsClick(movie.id) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = AccentColor
+                    containerColor = MaterialTheme.colorScheme.primary
                 ),
                 shape = RoundedCornerShape(12.dp)
             ) {

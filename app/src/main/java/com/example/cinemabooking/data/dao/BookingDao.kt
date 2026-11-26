@@ -63,4 +63,21 @@ interface BookingDao {
 
         return insertBooking(booking)
     }
+
+    @Transaction
+    suspend fun updateBookingIfSeatsAvailable(booking: BookingEntity) {
+        val existing = getBookingById(booking.id)
+            ?: throw IllegalArgumentException("Booking not found")
+        require(existing.movieId == booking.movieId && existing.showtimeId == booking.showtimeId)
+
+        val occupiedSeats = getBookingsByShowtime(booking.showtimeId)
+            .filter { it.id != booking.id }
+            .flatMap { it.seatIds.split(",") }
+            .toSet()
+        val requestedSeats = booking.seatIds.split(",").toSet()
+        if (requestedSeats.any { it in occupiedSeats }) {
+            throw IllegalStateException("One of these seats is already booked")
+        }
+        updateBooking(booking)
+    }
 }
