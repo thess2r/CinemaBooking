@@ -18,3 +18,19 @@ Checks run from this branch:
 - Manual network path: airplane mode → Discover error and Retry → restore network → Retry → Studio Ghibli films.
 
 For the demo, show the online Discover list separately from the local Dune booking. Online films have no real cinema sessions, payments or tickets.
+
+## Berik: My Bookings sort preference and seat validation
+
+Added after the emulator check above. Only the JVM unit tests have been run for these changes; the emulator rows are still to be filled in on the device before the defense.
+
+| ID | Check | Expected result | Status |
+| --- | --- | --- | --- |
+| UNIT-01 | `SeatInputValidatorTest`: trimming, case, blanks, empty items, unknown seats, duplicates | 10 tests pass | Passed (JVM) |
+| UNIT-02 | `BookingSortTest`: three sort orders, stable ties, unknown stored value falls back to default | 7 tests pass | Passed (JVM) |
+| DS-02 | `ThemePreferencesRepositoryTest.bookingSortOrderRemainsSavedForNewRepositoryInstance` | Sort order survives a new repository instance | Not run yet (needs emulator) |
+| DS-03 | Settings: pick "Highest price first", open My Bookings, force stop, reopen | Radio button and My Bookings order both stay on highest price first | Not run yet (needs emulator) |
+| DB-06 | Create two bookings with different prices, switch each order in Settings | My Bookings reorders and the "Sorted:" caption matches | Not run yet (needs emulator) |
+| DB-07 | Edit a booking and enter `a1, a1` or `D9` | Error message under the field, Room record unchanged | Not run yet (needs emulator) |
+
+How the pieces fit for the defense: `SettingsScreen` calls `ThemeViewModel.setBookingSortOrder`, which writes through `ThemePreferencesRepository` into DataStore. `ThemeViewModel.bookingSortOrder` is a `StateFlow` that `AppNavigation` passes to `MyBookingsScreen`, which sorts the Room list with `sortBookings`. The Room data itself is not changed by sorting.
+
