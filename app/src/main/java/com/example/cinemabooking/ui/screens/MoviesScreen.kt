@@ -35,7 +35,8 @@ fun MoviesScreen(
     movies: List<Movie>,
     onMovieClick: (Int) -> Unit,
     onSettingsClick: () -> Unit = {},
-    onMyBookingsClick: () -> Unit = {}
+    onMyBookingsClick: () -> Unit = {},
+    onDiscoverClick: () -> Unit = {}
 ) {
     var searchQuery by remember { mutableStateOf("") }
 
@@ -72,6 +73,7 @@ fun MoviesScreen(
         )
 
         Row {
+            TextButton(onClick = onDiscoverClick) { Text("Discover") }
             TextButton(onClick = onMyBookingsClick) { Text("My Bookings") }
             TextButton(onClick = onSettingsClick) { Text("Settings") }
         }

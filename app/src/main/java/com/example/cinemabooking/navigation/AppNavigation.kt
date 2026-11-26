@@ -26,6 +26,7 @@ import com.example.cinemabooking.navigation.CinemaRoutes.SUMMARY
 import com.example.cinemabooking.navigation.CinemaRoutes.TICKET
 import com.example.cinemabooking.navigation.CinemaRoutes.SETTINGS
 import com.example.cinemabooking.navigation.CinemaRoutes.MY_BOOKINGS
+import com.example.cinemabooking.navigation.CinemaRoutes.DISCOVER
 import com.example.cinemabooking.ui.screens.BookingSummaryScreen
 import com.example.cinemabooking.ui.screens.BookingUnavailableScreen
 import com.example.cinemabooking.ui.screens.MovieDetailsScreen
@@ -34,6 +35,7 @@ import com.example.cinemabooking.ui.screens.SeatSelectionScreen
 import com.example.cinemabooking.ui.screens.TicketScreen
 import com.example.cinemabooking.ui.screens.SettingsScreen
 import com.example.cinemabooking.ui.screens.MyBookingsScreen
+import com.example.cinemabooking.ui.screens.DiscoverScreen
 import com.example.cinemabooking.ui.viewmodel.CinemaViewModel
 import com.example.cinemabooking.ui.viewmodel.BookingsViewModel
 import com.example.cinemabooking.ui.viewmodel.BookingsViewModelFactory
@@ -76,8 +78,12 @@ fun AppNavigation(themeViewModel: ThemeViewModel) {
                     navController.navigate(CinemaRoutes.details(movieId))
                 },
                 onSettingsClick = { navController.navigate(SETTINGS) },
-                onMyBookingsClick = { navController.navigate(MY_BOOKINGS) }
+                onMyBookingsClick = { navController.navigate(MY_BOOKINGS) },
+                onDiscoverClick = { navController.navigate(DISCOVER) }
             )
+        }
+        composable(DISCOVER) {
+            DiscoverScreen(onBack = { navController.navigateUp() })
         }
         composable(MY_BOOKINGS) {
             val bookings by bookingsViewModel.bookings.collectAsState()
